@@ -1,0 +1,87 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Prévision carburant",
+        "description": "Choisissez les capteurs de prix des stations que vous utilisez pour un type de carburant (par exemple Prix Carburants). Fuel Forecast apprend quand chacune est généralement la moins chère et vous indique s'il vaut mieux faire le plein maintenant ou attendre.",
+        "data": {
+          "name": "Nom",
+          "stations": "Capteurs de prix",
+          "min_saving": "Économie minimale pour attendre (centimes par litre)",
+          "horizon": "Prévision sur",
+          "tank_size": "Taille du réservoir (litres)",
+          "fuel_level_entity": "Capteur de niveau de carburant (facultatif)",
+          "no_need_level": "Aucune recommandation au-dessus du niveau",
+          "urgent_level": "Faire le plein en dessous du niveau"
+        },
+        "data_description": {
+          "stations": "Tous les capteurs doivent utiliser la même unité. Seuls les capteurs existants sont lus, aucune requête supplémentaire n'est envoyée au service de prix.",
+          "min_saving": "Attendre n'est recommandé que si le prix prévu est inférieur d'au moins ce montant.",
+          "fuel_level_entity": "Un capteur en % ou en litres (les litres nécessitent la taille du réservoir)."
+        }
+      }
+    },
+    "error": {
+      "station_not_found": "L'un des capteurs sélectionnés n'existe pas.",
+      "mixed_units": "Les capteurs sélectionnés utilisent des unités différentes.",
+      "levels": "Le niveau « faire le plein » doit être inférieur au niveau « aucune recommandation »."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "stations": "Capteurs de prix",
+          "min_saving": "Économie minimale pour attendre (centimes par litre)",
+          "horizon": "Prévision sur",
+          "tank_size": "Taille du réservoir (litres)",
+          "fuel_level_entity": "Capteur de niveau de carburant (facultatif)",
+          "no_need_level": "Aucune recommandation au-dessus du niveau",
+          "urgent_level": "Faire le plein en dessous du niveau"
+        }
+      }
+    },
+    "error": {
+      "station_not_found": "L'un des capteurs sélectionnés n'existe pas.",
+      "mixed_units": "Les capteurs sélectionnés utilisent des unités différentes.",
+      "levels": "Le niveau « faire le plein » doit être inférieur au niveau « aucune recommandation »."
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "good_window": {
+        "name": "Bon moment pour faire le plein"
+      }
+    },
+    "sensor": {
+      "best_price_now": {
+        "name": "Meilleur prix actuel"
+      },
+      "lowest_price": {
+        "name": "Prix le plus bas prévu"
+      },
+      "lowest_time": {
+        "name": "Heure la moins chère"
+      },
+      "recommendation": {
+        "name": "Recommandation",
+        "state": {
+          "learning": "Apprentissage en cours",
+          "fill_now": "Faire le plein maintenant",
+          "wait": "Attendre",
+          "no_need": "Pas besoin de faire le plein",
+          "no_prices": "Aucun prix"
+        }
+      },
+      "saving_per_litre": {
+        "name": "Économie par litre"
+      },
+      "saving_per_fill": {
+        "name": "Économie par plein"
+      },
+      "coverage": {
+        "name": "Modèle appris"
+      }
+    }
+  }
+}

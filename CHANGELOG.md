@@ -5,6 +5,7 @@
 - "Learned pattern" now shows what is learned over all stations, also while no prices arrive (was 0 %).
 - Recommendation state `unavailable` renamed to `no_prices` (the word is reserved for entity availability).
 - Brand icon for HACS and the Home Assistant UI.
+- Translations: French, Italian, Spanish, Dutch, Portuguese.
 
 ## 0.1.0
 

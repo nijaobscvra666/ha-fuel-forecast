@@ -62,6 +62,10 @@ The recommendation stays `learning` until at least half of the hourly pattern is
 
 See [`examples/`](examples) for a notification automation and a dashboard card.
 
+## Languages
+
+The setup dialog and entity names are available in English, German, French, Italian, Spanish, Dutch and Portuguese. Translations other than English and German were written without a native speaker – corrections and new languages are very welcome as a pull request (`custom_components/fuel_forecast/translations/`).
+
 ## Privacy
 
 Everything is computed inside your Home Assistant. Diagnostics downloads contain neither station names nor entity ids.

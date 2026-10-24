@@ -1,0 +1,87 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Previsione carburante",
+        "description": "Scegli i sensori di prezzo dei distributori che usi per un tipo di carburante (ad esempio Osservaprezzi). Fuel Forecast impara quando ciascuno è di solito più economico e ti dice se conviene fare rifornimento ora o aspettare.",
+        "data": {
+          "name": "Nome",
+          "stations": "Sensori di prezzo",
+          "min_saving": "Risparmio minimo per aspettare (centesimi al litro)",
+          "horizon": "Previsione per",
+          "tank_size": "Capacità del serbatoio (litri)",
+          "fuel_level_entity": "Sensore livello carburante (facoltativo)",
+          "no_need_level": "Nessun consiglio sopra il livello",
+          "urgent_level": "Fai rifornimento sotto il livello"
+        },
+        "data_description": {
+          "stations": "Tutti i sensori devono usare la stessa unità. Vengono letti solo i sensori esistenti, nessuna richiesta aggiuntiva al servizio prezzi.",
+          "min_saving": "Si consiglia di aspettare solo se il prezzo previsto è più basso almeno di questo importo.",
+          "fuel_level_entity": "Un sensore in % o in litri (i litri richiedono la capacità del serbatoio)."
+        }
+      }
+    },
+    "error": {
+      "station_not_found": "Uno dei sensori selezionati non esiste.",
+      "mixed_units": "I sensori selezionati usano unità diverse.",
+      "levels": "Il livello per «fai rifornimento» deve essere inferiore a quello per «nessun consiglio»."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "stations": "Sensori di prezzo",
+          "min_saving": "Risparmio minimo per aspettare (centesimi al litro)",
+          "horizon": "Previsione per",
+          "tank_size": "Capacità del serbatoio (litri)",
+          "fuel_level_entity": "Sensore livello carburante (facoltativo)",
+          "no_need_level": "Nessun consiglio sopra il livello",
+          "urgent_level": "Fai rifornimento sotto il livello"
+        }
+      }
+    },
+    "error": {
+      "station_not_found": "Uno dei sensori selezionati non esiste.",
+      "mixed_units": "I sensori selezionati usano unità diverse.",
+      "levels": "Il livello per «fai rifornimento» deve essere inferiore a quello per «nessun consiglio»."
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "good_window": {
+        "name": "Buon momento per fare rifornimento"
+      }
+    },
+    "sensor": {
+      "best_price_now": {
+        "name": "Miglior prezzo ora"
+      },
+      "lowest_price": {
+        "name": "Prezzo minimo previsto"
+      },
+      "lowest_time": {
+        "name": "Orario più economico"
+      },
+      "recommendation": {
+        "name": "Consiglio",
+        "state": {
+          "learning": "In apprendimento",
+          "fill_now": "Fai rifornimento ora",
+          "wait": "Aspetta",
+          "no_need": "Rifornimento non necessario",
+          "no_prices": "Nessun prezzo"
+        }
+      },
+      "saving_per_litre": {
+        "name": "Risparmio al litro"
+      },
+      "saving_per_fill": {
+        "name": "Risparmio per pieno"
+      },
+      "coverage": {
+        "name": "Modello appreso"
+      }
+    }
+  }
+}

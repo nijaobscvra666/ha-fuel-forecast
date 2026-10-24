@@ -1,0 +1,87 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Brandstofprijsvoorspelling",
+        "description": "Kies de prijssensoren van de tankstations die je voor één brandstofsoort gebruikt. Fuel Forecast leert wanneer elk station meestal het goedkoopst is en vertelt je of je nu moet tanken of beter kunt wachten.",
+        "data": {
+          "name": "Naam",
+          "stations": "Prijssensoren",
+          "min_saving": "Minimale besparing om te wachten (cent per liter)",
+          "horizon": "Vooruitkijken",
+          "tank_size": "Tankinhoud (liter)",
+          "fuel_level_entity": "Brandstofniveausensor (optioneel)",
+          "no_need_level": "Geen advies boven brandstofniveau",
+          "urgent_level": "Nu tanken onder brandstofniveau"
+        },
+        "data_description": {
+          "stations": "Alle sensoren moeten dezelfde eenheid gebruiken. Alleen bestaande sensoren worden gelezen, er worden geen extra verzoeken naar de prijsdienst gestuurd.",
+          "min_saving": "Wachten wordt alleen geadviseerd als de verwachte prijs minstens zoveel lager is.",
+          "fuel_level_entity": "Een sensor in % of in liters (liters vereisen de tankinhoud)."
+        }
+      }
+    },
+    "error": {
+      "station_not_found": "Een van de gekozen sensoren bestaat niet.",
+      "mixed_units": "De gekozen sensoren gebruiken verschillende eenheden.",
+      "levels": "Het niveau voor „nu tanken” moet lager zijn dan het niveau voor „geen advies”."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "stations": "Prijssensoren",
+          "min_saving": "Minimale besparing om te wachten (cent per liter)",
+          "horizon": "Vooruitkijken",
+          "tank_size": "Tankinhoud (liter)",
+          "fuel_level_entity": "Brandstofniveausensor (optioneel)",
+          "no_need_level": "Geen advies boven brandstofniveau",
+          "urgent_level": "Nu tanken onder brandstofniveau"
+        }
+      }
+    },
+    "error": {
+      "station_not_found": "Een van de gekozen sensoren bestaat niet.",
+      "mixed_units": "De gekozen sensoren gebruiken verschillende eenheden.",
+      "levels": "Het niveau voor „nu tanken” moet lager zijn dan het niveau voor „geen advies”."
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "good_window": {
+        "name": "Goed moment om te tanken"
+      }
+    },
+    "sensor": {
+      "best_price_now": {
+        "name": "Beste prijs nu"
+      },
+      "lowest_price": {
+        "name": "Verwachte laagste prijs"
+      },
+      "lowest_time": {
+        "name": "Goedkoopste tijd"
+      },
+      "recommendation": {
+        "name": "Advies",
+        "state": {
+          "learning": "Nog aan het leren",
+          "fill_now": "Nu tanken",
+          "wait": "Wachten",
+          "no_need": "Tanken niet nodig",
+          "no_prices": "Geen prijzen"
+        }
+      },
+      "saving_per_litre": {
+        "name": "Besparing per liter"
+      },
+      "saving_per_fill": {
+        "name": "Besparing per tankbeurt"
+      },
+      "coverage": {
+        "name": "Geleerd patroon"
+      }
+    }
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Previsión de combustible",
+        "description": "Elige los sensores de precio de las gasolineras que usas para un tipo de combustible. Fuel Forecast aprende cuándo suele ser más barata cada una y te dice si conviene repostar ahora o esperar.",
+        "data": {
+          "name": "Nombre",
+          "stations": "Sensores de precio",
+          "min_saving": "Ahorro mínimo para esperar (céntimos por litro)",
+          "horizon": "Previsión a",
+          "tank_size": "Capacidad del depósito (litros)",
+          "fuel_level_entity": "Sensor de nivel de combustible (opcional)",
+          "no_need_level": "Sin recomendación por encima del nivel",
+          "urgent_level": "Repostar por debajo del nivel"
+        },
+        "data_description": {
+          "stations": "Todos los sensores deben usar la misma unidad. Solo se leen los sensores existentes, no se envían consultas adicionales al servicio de precios.",
+          "min_saving": "Solo se recomienda esperar si el precio previsto es al menos esta cantidad más bajo.",
+          "fuel_level_entity": "Un sensor en % o en litros (los litros necesitan la capacidad del depósito)."
+        }
+      }
+    },
+    "error": {
+      "station_not_found": "Uno de los sensores seleccionados no existe.",
+      "mixed_units": "Los sensores seleccionados usan unidades distintas.",
+      "levels": "El nivel de «repostar ya» debe ser inferior al de «sin recomendación»."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "stations": "Sensores de precio",
+          "min_saving": "Ahorro mínimo para esperar (céntimos por litro)",
+          "horizon": "Previsión a",
+          "tank_size": "Capacidad del depósito (litros)",
+          "fuel_level_entity": "Sensor de nivel de combustible (opcional)",
+          "no_need_level": "Sin recomendación por encima del nivel",
+          "urgent_level": "Repostar por debajo del nivel"
+        }
+      }
+    },
+    "error": {
+      "station_not_found": "Uno de los sensores seleccionados no existe.",
+      "mixed_units": "Los sensores seleccionados usan unidades distintas.",
+      "levels": "El nivel de «repostar ya» debe ser inferior al de «sin recomendación»."
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "good_window": {
+        "name": "Buen momento para repostar"
+      }
+    },
+    "sensor": {
+      "best_price_now": {
+        "name": "Mejor precio ahora"
+      },
+      "lowest_price": {
+        "name": "Precio mínimo previsto"
+      },
+      "lowest_time": {
+        "name": "Hora más barata"
+      },
+      "recommendation": {
+        "name": "Recomendación",
+        "state": {
+          "learning": "Aprendiendo",
+          "fill_now": "Repostar ahora",
+          "wait": "Esperar",
+          "no_need": "No hace falta repostar",
+          "no_prices": "Sin precios"
+        }
+      },
+      "saving_per_litre": {
+        "name": "Ahorro por litro"
+      },
+      "saving_per_fill": {
+        "name": "Ahorro por depósito"
+      },
+      "coverage": {
+        "name": "Patrón aprendido"
+      }
+    }
+  }
+}
