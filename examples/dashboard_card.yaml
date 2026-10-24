@@ -7,4 +7,4 @@ entities:
   - entity: sensor.super_e5_lowest_price
   - entity: sensor.super_e5_cheapest_time
     format: time
-  - entity: sensor.super_e5_saving_per_fill_up
+  - entity: sensor.super_e5_saving_if_you_wait_full_tank

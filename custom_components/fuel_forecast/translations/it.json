@@ -50,15 +50,45 @@
   "entity": {
     "binary_sensor": {
       "good_window": {
-        "name": "Buon momento per fare rifornimento"
+        "name": "Buon momento per fare rifornimento",
+        "state_attributes": {
+          "station": {
+            "name": "Distributore"
+          },
+          "price_now": {
+            "name": "Prezzo ora"
+          },
+          "urgent": {
+            "name": "Urgente"
+          }
+        }
       }
     },
     "sensor": {
       "best_price_now": {
-        "name": "Miglior prezzo ora"
+        "name": "Miglior prezzo ora",
+        "state_attributes": {
+          "station": {
+            "name": "Distributore"
+          },
+          "entity_id": {
+            "name": "Entità"
+          }
+        }
       },
       "lowest_price": {
-        "name": "Prezzo minimo previsto"
+        "name": "Prezzo minimo previsto",
+        "state_attributes": {
+          "station": {
+            "name": "Distributore"
+          },
+          "entity_id": {
+            "name": "Entità"
+          },
+          "forecast": {
+            "name": "Previsione"
+          }
+        }
       },
       "lowest_time": {
         "name": "Orario più economico"
@@ -71,13 +101,76 @@
           "wait": "Aspetta",
           "no_need": "Rifornimento non necessario",
           "no_prices": "Nessun prezzo"
+        },
+        "state_attributes": {
+          "price_now": {
+            "name": "Prezzo ora"
+          },
+          "station_now": {
+            "name": "Distributore ora"
+          },
+          "expected_price": {
+            "name": "Prezzo previsto"
+          },
+          "expected_station": {
+            "name": "Distributore previsto"
+          },
+          "expected_time": {
+            "name": "Previsto alle"
+          },
+          "saving_per_litre": {
+            "name": "Risparmio al litro (centesimi)"
+          },
+          "min_saving": {
+            "name": "Risparmio minimo per aspettare (centesimi)"
+          },
+          "urgent": {
+            "name": "Urgente"
+          }
         }
       },
       "saving_per_litre": {
-        "name": "Risparmio al litro"
+        "name": "Risparmio aspettando (al litro)",
+        "state_attributes": {
+          "price_now": {
+            "name": "Prezzo ora"
+          },
+          "station_now": {
+            "name": "Distributore ora"
+          },
+          "expected_price": {
+            "name": "Prezzo previsto"
+          },
+          "expected_station": {
+            "name": "Distributore previsto"
+          },
+          "expected_time": {
+            "name": "Previsto alle"
+          }
+        }
       },
       "saving_per_fill": {
-        "name": "Risparmio per pieno"
+        "name": "Risparmio aspettando (pieno)",
+        "state_attributes": {
+          "price_now": {
+            "name": "Prezzo ora"
+          },
+          "station_now": {
+            "name": "Distributore ora"
+          },
+          "expected_price": {
+            "name": "Prezzo previsto"
+          },
+          "expected_station": {
+            "name": "Distributore previsto"
+          },
+          "expected_time": {
+            "name": "Previsto alle"
+          },
+          "litres": {
+            "name": "Litri"
+          }
+        }
       },
       "coverage": {
         "name": "Modello appreso"

@@ -50,15 +50,45 @@
   "entity": {
     "binary_sensor": {
       "good_window": {
-        "name": "Bon moment pour faire le plein"
+        "name": "Bon moment pour faire le plein",
+        "state_attributes": {
+          "station": {
+            "name": "Station"
+          },
+          "price_now": {
+            "name": "Prix actuel"
+          },
+          "urgent": {
+            "name": "Urgent"
+          }
+        }
       }
     },
     "sensor": {
       "best_price_now": {
-        "name": "Meilleur prix actuel"
+        "name": "Meilleur prix actuel",
+        "state_attributes": {
+          "station": {
+            "name": "Station"
+          },
+          "entity_id": {
+            "name": "Entité"
+          }
+        }
       },
       "lowest_price": {
-        "name": "Prix le plus bas prévu"
+        "name": "Prix le plus bas prévu",
+        "state_attributes": {
+          "station": {
+            "name": "Station"
+          },
+          "entity_id": {
+            "name": "Entité"
+          },
+          "forecast": {
+            "name": "Prévision"
+          }
+        }
       },
       "lowest_time": {
         "name": "Heure la moins chère"
@@ -71,13 +101,76 @@
           "wait": "Attendre",
           "no_need": "Pas besoin de faire le plein",
           "no_prices": "Aucun prix"
+        },
+        "state_attributes": {
+          "price_now": {
+            "name": "Prix actuel"
+          },
+          "station_now": {
+            "name": "Station actuelle"
+          },
+          "expected_price": {
+            "name": "Prix prévu"
+          },
+          "expected_station": {
+            "name": "Station prévue"
+          },
+          "expected_time": {
+            "name": "Prévu à"
+          },
+          "saving_per_litre": {
+            "name": "Économie par litre (centimes)"
+          },
+          "min_saving": {
+            "name": "Économie minimale pour attendre (centimes)"
+          },
+          "urgent": {
+            "name": "Urgent"
+          }
         }
       },
       "saving_per_litre": {
-        "name": "Économie par litre"
+        "name": "Économie en attendant (par litre)",
+        "state_attributes": {
+          "price_now": {
+            "name": "Prix actuel"
+          },
+          "station_now": {
+            "name": "Station actuelle"
+          },
+          "expected_price": {
+            "name": "Prix prévu"
+          },
+          "expected_station": {
+            "name": "Station prévue"
+          },
+          "expected_time": {
+            "name": "Prévu à"
+          }
+        }
       },
       "saving_per_fill": {
-        "name": "Économie par plein"
+        "name": "Économie en attendant (plein)",
+        "state_attributes": {
+          "price_now": {
+            "name": "Prix actuel"
+          },
+          "station_now": {
+            "name": "Station actuelle"
+          },
+          "expected_price": {
+            "name": "Prix prévu"
+          },
+          "expected_station": {
+            "name": "Station prévue"
+          },
+          "expected_time": {
+            "name": "Prévu à"
+          },
+          "litres": {
+            "name": "Litres"
+          }
+        }
       },
       "coverage": {
         "name": "Modèle appris"

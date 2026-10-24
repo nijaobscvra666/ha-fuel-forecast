@@ -50,15 +50,45 @@
   "entity": {
     "binary_sensor": {
       "good_window": {
-        "name": "Buen momento para repostar"
+        "name": "Buen momento para repostar",
+        "state_attributes": {
+          "station": {
+            "name": "Gasolinera"
+          },
+          "price_now": {
+            "name": "Precio ahora"
+          },
+          "urgent": {
+            "name": "Urgente"
+          }
+        }
       }
     },
     "sensor": {
       "best_price_now": {
-        "name": "Mejor precio ahora"
+        "name": "Mejor precio ahora",
+        "state_attributes": {
+          "station": {
+            "name": "Gasolinera"
+          },
+          "entity_id": {
+            "name": "Entidad"
+          }
+        }
       },
       "lowest_price": {
-        "name": "Precio mínimo previsto"
+        "name": "Precio mínimo previsto",
+        "state_attributes": {
+          "station": {
+            "name": "Gasolinera"
+          },
+          "entity_id": {
+            "name": "Entidad"
+          },
+          "forecast": {
+            "name": "Previsión"
+          }
+        }
       },
       "lowest_time": {
         "name": "Hora más barata"
@@ -71,13 +101,76 @@
           "wait": "Esperar",
           "no_need": "No hace falta repostar",
           "no_prices": "Sin precios"
+        },
+        "state_attributes": {
+          "price_now": {
+            "name": "Precio ahora"
+          },
+          "station_now": {
+            "name": "Gasolinera ahora"
+          },
+          "expected_price": {
+            "name": "Precio previsto"
+          },
+          "expected_station": {
+            "name": "Gasolinera prevista"
+          },
+          "expected_time": {
+            "name": "Previsto a las"
+          },
+          "saving_per_litre": {
+            "name": "Ahorro por litro (céntimos)"
+          },
+          "min_saving": {
+            "name": "Ahorro mínimo para esperar (céntimos)"
+          },
+          "urgent": {
+            "name": "Urgente"
+          }
         }
       },
       "saving_per_litre": {
-        "name": "Ahorro por litro"
+        "name": "Ahorro si esperas (por litro)",
+        "state_attributes": {
+          "price_now": {
+            "name": "Precio ahora"
+          },
+          "station_now": {
+            "name": "Gasolinera ahora"
+          },
+          "expected_price": {
+            "name": "Precio previsto"
+          },
+          "expected_station": {
+            "name": "Gasolinera prevista"
+          },
+          "expected_time": {
+            "name": "Previsto a las"
+          }
+        }
       },
       "saving_per_fill": {
-        "name": "Ahorro por depósito"
+        "name": "Ahorro si esperas (depósito lleno)",
+        "state_attributes": {
+          "price_now": {
+            "name": "Precio ahora"
+          },
+          "station_now": {
+            "name": "Gasolinera ahora"
+          },
+          "expected_price": {
+            "name": "Precio previsto"
+          },
+          "expected_station": {
+            "name": "Gasolinera prevista"
+          },
+          "expected_time": {
+            "name": "Previsto a las"
+          },
+          "litres": {
+            "name": "Litros"
+          }
+        }
       },
       "coverage": {
         "name": "Patrón aprendido"

@@ -37,6 +37,6 @@ class GoodWindowSensor(FuelForecastEntity, BinarySensorEntity):
         data = self.coordinator.data
         return {
             "station": self.coordinator.station_name(data.best_now_station),
-            "price": data.best_now_price,
+            "price_now": data.best_now_price,
             "urgent": data.urgent,
         }

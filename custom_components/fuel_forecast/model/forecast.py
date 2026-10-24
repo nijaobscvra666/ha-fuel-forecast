@@ -57,6 +57,8 @@ class Result:
     lowest_station: str | None = None
     saving_per_litre: float | None = None
     saving_per_fill: float | None = None
+    # Litres the saving per fill-up is based on.
+    fill_litres: float | None = None
     coverage: float = 0.0
     urgent: bool = False
     forecast: list[ForecastPoint] = field(default_factory=list)
@@ -165,6 +167,7 @@ def recommend(
     litres = settings.tank_size
     if litres is not None and settings.fuel_level is not None:
         litres = litres * max(0.0, 100.0 - settings.fuel_level) / 100.0
+    result.fill_litres = litres
     result.saving_per_fill = saving * litres if litres is not None else None
 
     level = settings.fuel_level

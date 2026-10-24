@@ -55,8 +55,11 @@ Entity ids below assume English as system language; Home Assistant builds them f
 | `sensor.<name>_best_price_now` | Cheapest price right now, station as attribute |
 | `sensor.<name>_lowest_price` | Expected lowest price, with the hourly forecast as attribute |
 | `sensor.<name>_cheapest_time` | When that lowest price is expected |
-| `sensor.<name>_saving_per_litre` / `_saving_per_fill_up` | What waiting would save |
+| `sensor.<name>_saving_if_you_wait_per_litre` | What waiting for the expected low would save, in cents (ct/¢/p) per litre |
+| `sensor.<name>_saving_if_you_wait_full_tank` | The same for a fill-up (missing litres if a fuel level sensor is set, otherwise the full tank) |
 | `sensor.<name>_learned_pattern` | Diagnostic: how much of the pattern is learned (%) |
+
+The recommendation and both saving sensors carry what they compare as attributes: price and station **now** versus the **expected** price, station and time – so a saving of 0.7 ct always reads as "fill up now at ELAN for 2.079 or wait until 07:00 for 2.072 at OIL!".
 
 The recommendation stays `learning` until at least half of the hourly pattern is known – usually after about three days, immediately if long-term statistics exist.
 

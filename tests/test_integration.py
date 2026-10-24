@@ -77,6 +77,11 @@ async def test_setup_creates_entities_while_learning(hass: HomeAssistant) -> Non
     assert best.state == "1.759"
     assert best.attributes["unit_of_measurement"] == "€"
     assert hass.states.get("sensor.super_e5_recommendation").state == "learning"
+    # Saving per litre is shown in cents and says what it compares.
+    saving = hass.states.get("sensor.super_e5_saving_if_you_wait_per_litre")
+    assert saving.attributes["unit_of_measurement"] == "ct"
+    assert saving.attributes["price_now"] == 1.759
+    assert "expected_time" in saving.attributes
     assert hass.states.get("binary_sensor.super_e5_good_time_to_fill_up").state == "off"
 
     # A price change is reflected right away (recompute without learning).

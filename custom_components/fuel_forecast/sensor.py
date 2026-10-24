@@ -33,11 +33,29 @@ class FuelForecastSensorDescription(SensorEntityDescription):
     value: Callable[[Result], Any]
     # Price-like sensors take the unit of the source sensors.
     price_unit: bool = False
+    # Saving per litre: minor unit of the currency (ct, ¢, p).
+    minor_unit: bool = False
     attributes: Callable[[FuelForecastCoordinator, Result], dict[str, Any]] | None = None
 
 
 def _round(value: float | None, digits: int = 3) -> float | None:
     return None if value is None else round(value, digits)
+
+
+# Saving per litre is shown in the minor unit (2,079 € - 2,072 € = 0,7 ct),
+# that is how people think about fuel prices.
+MINOR_UNITS = {"€": "ct", "EUR": "ct", "$": "¢", "USD": "¢", "£": "p", "GBP": "p", "CHF": "Rp."}
+
+
+def _comparison(c: FuelForecastCoordinator, r: Result) -> dict[str, Any]:
+    """What a saving is measured against: fill up now vs. wait for the low."""
+    return {
+        "price_now": _round(r.best_now_price),
+        "station_now": c.station_name(r.best_now_station),
+        "expected_price": _round(r.lowest_price),
+        "expected_station": c.station_name(r.lowest_station),
+        "expected_time": r.lowest_time.isoformat() if r.lowest_time else None,
+    }
 
 
 SENSORS = (
@@ -76,19 +94,28 @@ SENSORS = (
         device_class=SensorDeviceClass.ENUM,
         options=[r.value for r in Recommendation],
         value=lambda r: r.recommendation.value,
-        attributes=lambda c, r: {"urgent": r.urgent},
+        attributes=lambda c, r: {
+            **_comparison(c, r),
+            "saving_per_litre": _round(r.saving_per_litre * 100, 1)
+            if r.saving_per_litre is not None
+            else None,
+            "min_saving": c.config_entry.options.get("min_saving"),
+            "urgent": r.urgent,
+        },
     ),
     FuelForecastSensorDescription(
         key="saving_per_litre",
-        price_unit=True,
-        suggested_display_precision=3,
-        value=lambda r: _round(r.saving_per_litre),
+        minor_unit=True,
+        suggested_display_precision=1,
+        value=lambda r: None if r.saving_per_litre is None else round(r.saving_per_litre * 100, 1),
+        attributes=_comparison,
     ),
     FuelForecastSensorDescription(
         key="saving_per_fill",
         price_unit=True,
         suggested_display_precision=2,
         value=lambda r: _round(r.saving_per_fill, 2),
+        attributes=lambda c, r: {**_comparison(c, r), "litres": _round(r.fill_litres, 1)},
     ),
     FuelForecastSensorDescription(
         key="coverage",
@@ -123,6 +150,9 @@ class FuelForecastSensor(FuelForecastEntity, SensorEntity):
 
     @property
     def native_unit_of_measurement(self) -> str | None:
+        if self.entity_description.minor_unit:
+            unit = self.coordinator.unit
+            return MINOR_UNITS.get(unit, f"1/100 {unit}") if unit else None
         if self.entity_description.price_unit:
             return self.coordinator.unit
         return self.entity_description.native_unit_of_measurement

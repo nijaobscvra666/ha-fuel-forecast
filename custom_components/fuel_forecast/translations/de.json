@@ -50,15 +50,45 @@
   "entity": {
     "binary_sensor": {
       "good_window": {
-        "name": "Guter Moment zum Tanken"
+        "name": "Guter Moment zum Tanken",
+        "state_attributes": {
+          "station": {
+            "name": "Tankstelle"
+          },
+          "price_now": {
+            "name": "Preis jetzt"
+          },
+          "urgent": {
+            "name": "Dringend"
+          }
+        }
       }
     },
     "sensor": {
       "best_price_now": {
-        "name": "Bester Preis jetzt"
+        "name": "Bester Preis jetzt",
+        "state_attributes": {
+          "station": {
+            "name": "Tankstelle"
+          },
+          "entity_id": {
+            "name": "Entität"
+          }
+        }
       },
       "lowest_price": {
-        "name": "Erwarteter Tiefstpreis"
+        "name": "Erwarteter Tiefstpreis",
+        "state_attributes": {
+          "station": {
+            "name": "Tankstelle"
+          },
+          "entity_id": {
+            "name": "Entität"
+          },
+          "forecast": {
+            "name": "Prognose"
+          }
+        }
       },
       "lowest_time": {
         "name": "Günstigste Zeit"
@@ -71,13 +101,76 @@
           "wait": "Warten",
           "no_need": "Tanken nicht nötig",
           "no_prices": "Keine Preise"
+        },
+        "state_attributes": {
+          "price_now": {
+            "name": "Preis jetzt"
+          },
+          "station_now": {
+            "name": "Tankstelle jetzt"
+          },
+          "expected_price": {
+            "name": "Erwarteter Preis"
+          },
+          "expected_station": {
+            "name": "Erwartete Tankstelle"
+          },
+          "expected_time": {
+            "name": "Erwartet um"
+          },
+          "saving_per_litre": {
+            "name": "Ersparnis pro Liter (Cent)"
+          },
+          "min_saving": {
+            "name": "Mindestersparnis fürs Warten (Cent)"
+          },
+          "urgent": {
+            "name": "Dringend"
+          }
         }
       },
       "saving_per_litre": {
-        "name": "Ersparnis pro Liter"
+        "name": "Ersparnis bei Warten (pro Liter)",
+        "state_attributes": {
+          "price_now": {
+            "name": "Preis jetzt"
+          },
+          "station_now": {
+            "name": "Tankstelle jetzt"
+          },
+          "expected_price": {
+            "name": "Erwarteter Preis"
+          },
+          "expected_station": {
+            "name": "Erwartete Tankstelle"
+          },
+          "expected_time": {
+            "name": "Erwartet um"
+          }
+        }
       },
       "saving_per_fill": {
-        "name": "Ersparnis pro Tankfüllung"
+        "name": "Ersparnis bei Warten (Tankfüllung)",
+        "state_attributes": {
+          "price_now": {
+            "name": "Preis jetzt"
+          },
+          "station_now": {
+            "name": "Tankstelle jetzt"
+          },
+          "expected_price": {
+            "name": "Erwarteter Preis"
+          },
+          "expected_station": {
+            "name": "Erwartete Tankstelle"
+          },
+          "expected_time": {
+            "name": "Erwartet um"
+          },
+          "litres": {
+            "name": "Liter"
+          }
+        }
       },
       "coverage": {
         "name": "Gelerntes Preismuster"

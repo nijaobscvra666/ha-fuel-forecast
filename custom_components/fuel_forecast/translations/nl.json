@@ -50,15 +50,45 @@
   "entity": {
     "binary_sensor": {
       "good_window": {
-        "name": "Goed moment om te tanken"
+        "name": "Goed moment om te tanken",
+        "state_attributes": {
+          "station": {
+            "name": "Station"
+          },
+          "price_now": {
+            "name": "Prijs nu"
+          },
+          "urgent": {
+            "name": "Dringend"
+          }
+        }
       }
     },
     "sensor": {
       "best_price_now": {
-        "name": "Beste prijs nu"
+        "name": "Beste prijs nu",
+        "state_attributes": {
+          "station": {
+            "name": "Station"
+          },
+          "entity_id": {
+            "name": "Entiteit"
+          }
+        }
       },
       "lowest_price": {
-        "name": "Verwachte laagste prijs"
+        "name": "Verwachte laagste prijs",
+        "state_attributes": {
+          "station": {
+            "name": "Station"
+          },
+          "entity_id": {
+            "name": "Entiteit"
+          },
+          "forecast": {
+            "name": "Voorspelling"
+          }
+        }
       },
       "lowest_time": {
         "name": "Goedkoopste tijd"
@@ -71,13 +101,76 @@
           "wait": "Wachten",
           "no_need": "Tanken niet nodig",
           "no_prices": "Geen prijzen"
+        },
+        "state_attributes": {
+          "price_now": {
+            "name": "Prijs nu"
+          },
+          "station_now": {
+            "name": "Station nu"
+          },
+          "expected_price": {
+            "name": "Verwachte prijs"
+          },
+          "expected_station": {
+            "name": "Verwacht station"
+          },
+          "expected_time": {
+            "name": "Verwacht om"
+          },
+          "saving_per_litre": {
+            "name": "Besparing per liter (cent)"
+          },
+          "min_saving": {
+            "name": "Minimale besparing om te wachten (cent)"
+          },
+          "urgent": {
+            "name": "Dringend"
+          }
         }
       },
       "saving_per_litre": {
-        "name": "Besparing per liter"
+        "name": "Besparing bij wachten (per liter)",
+        "state_attributes": {
+          "price_now": {
+            "name": "Prijs nu"
+          },
+          "station_now": {
+            "name": "Station nu"
+          },
+          "expected_price": {
+            "name": "Verwachte prijs"
+          },
+          "expected_station": {
+            "name": "Verwacht station"
+          },
+          "expected_time": {
+            "name": "Verwacht om"
+          }
+        }
       },
       "saving_per_fill": {
-        "name": "Besparing per tankbeurt"
+        "name": "Besparing bij wachten (volle tank)",
+        "state_attributes": {
+          "price_now": {
+            "name": "Prijs nu"
+          },
+          "station_now": {
+            "name": "Station nu"
+          },
+          "expected_price": {
+            "name": "Verwachte prijs"
+          },
+          "expected_station": {
+            "name": "Verwacht station"
+          },
+          "expected_time": {
+            "name": "Verwacht om"
+          },
+          "litres": {
+            "name": "Liter"
+          }
+        }
       },
       "coverage": {
         "name": "Geleerd patroon"
