@@ -6,6 +6,7 @@
 - Recommendation state `unavailable` renamed to `no_prices` (the word is reserved for entity availability).
 - Brand icon for HACS and the Home Assistant UI.
 - Translations: French, Italian, Spanish, Dutch, Portuguese.
+- Cleaner station names (no "None" house numbers, no double spaces).
 
 ## 0.1.0
 

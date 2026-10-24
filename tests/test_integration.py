@@ -89,4 +89,16 @@ async def test_setup_creates_entities_while_learning(hass: HomeAssistant) -> Non
     await hass.async_block_till_done()
     assert hass.states.get("sensor.super_e5_best_price_now").state == "1.759"
 
+    # Station names are cleaned up (real Tankerkönig data: "None", trailing spaces).
+    hass.states.async_set(
+        STATIONS[0], "1.659", {"unit_of_measurement": "€", "brand": "OIL!", "street": "Brückenstraße 31", "house_number": "None"}
+    )
+    await hass.async_block_till_done()
+    assert hass.states.get("sensor.super_e5_best_price_now").attributes["station"] == "OIL! Brückenstraße 31"
+    hass.states.async_set(
+        STATIONS[0], "1.659", {"unit_of_measurement": "€", "brand": "ELAN", "street": "Pommernstr. ", "house_number": "16"}
+    )
+    await hass.async_block_till_done()
+    assert hass.states.get("sensor.super_e5_best_price_now").attributes["station"] == "ELAN Pommernstr. 16"
+
     assert await hass.config_entries.async_unload(entry.entry_id)

@@ -97,7 +97,12 @@ class FuelForecastCoordinator(DataUpdateCoordinator[Result]):
         attrs = state.attributes
         # Tankerkönig exposes brand + street; other sources fall back to the name.
         if attrs.get("brand") and attrs.get("street"):
-            return f"{attrs['brand']} {attrs['street']} {attrs.get('house_number', '')}".strip()
+            street = str(attrs["street"]).strip()
+            number = str(attrs.get("house_number") or "").strip()
+            # Seen in real data: house_number "None", or the number already in street.
+            if number.lower() in ("", "none", "null") or street.endswith(number):
+                number = ""
+            return " ".join(f"{attrs['brand']} {street} {number}".split())
         return state.name
 
     async def async_setup(self) -> None:
