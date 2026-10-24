@@ -34,7 +34,7 @@ def _prices(hass: HomeAssistant, a: str = "1.789", b: str = "1.759", unit_b: str
     hass.states.async_set(STATIONS[1], b, {"unit_of_measurement": unit_b})
 
 
-async def test_config_flow_creates_entry(recorder_mock, hass: HomeAssistant) -> None:
+async def test_config_flow_creates_entry(hass: HomeAssistant) -> None:
     _prices(hass)
     result = await hass.config_entries.flow.async_init(
         DOMAIN, context={"source": config_entries.SOURCE_USER}
@@ -48,7 +48,7 @@ async def test_config_flow_creates_entry(recorder_mock, hass: HomeAssistant) -> 
     assert result["options"][CONF_STATIONS] == STATIONS
 
 
-async def test_config_flow_rejects_mixed_units(recorder_mock, hass: HomeAssistant) -> None:
+async def test_config_flow_rejects_mixed_units(hass: HomeAssistant) -> None:
     _prices(hass, unit_b="$")
     result = await hass.config_entries.flow.async_init(
         DOMAIN, context={"source": config_entries.SOURCE_USER}
@@ -60,7 +60,7 @@ async def test_config_flow_rejects_mixed_units(recorder_mock, hass: HomeAssistan
     assert result["errors"] == {"base": "mixed_units"}
 
 
-async def test_setup_creates_entities_while_learning(recorder_mock, hass: HomeAssistant) -> None:
+async def test_setup_creates_entities_while_learning(hass: HomeAssistant) -> None:
     _prices(hass)
     hass.states.async_set("sensor.car_fuel_level", "42", {"unit_of_measurement": "%"})
     entry = MockConfigEntry(
