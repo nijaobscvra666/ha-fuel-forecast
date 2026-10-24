@@ -1,10 +1,6 @@
 {
   "domain": "fuel_forecast",
   "name": "Fuel Forecast",
-  "categories": [
-    "local_services",
-    "helpers.calculate_value"
-  ],
   "codeowners": [
     "@nijaobscvra666"
   ],
