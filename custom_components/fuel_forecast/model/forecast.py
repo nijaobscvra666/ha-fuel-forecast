@@ -9,9 +9,18 @@ from dataclasses import dataclass, field
 from datetime import datetime, timedelta, tzinfo
 from enum import StrEnum
 
+import math
 from statistics import median
 
 from .profile import MAX_PLAUSIBLE_CHANGE, StationProfile, bucket_of
+
+# How fast the current price's own offset fades out of the forecast (hours,
+# e-folding). The pattern says what is usual at a given hour; the current
+# price only tells something about the next hour or two.
+CURRENT_OFFSET_DECAY_H = 3.0
+# Never expect a station to drop more than this below its lowest price of
+# the last 24 h.
+MAX_BELOW_RECENT_MIN = 0.02
 
 # Below this share of learned buckets the forecast is not trusted.
 MIN_COVERAGE = 0.5
@@ -91,8 +100,16 @@ def build_forecast(
 ) -> list[ForecastPoint]:
     """Cheapest expected price per coming hour across all stations.
 
-    Each station's expected price = current price shifted by the difference
-    between the learned deviation of the target hour and of the current hour.
+    Each station's expected price = its trailing 24 h median + the learned
+    deviation of the target hour, plus the current price's own offset from
+    what is usual right now, fading out over the next hours.
+
+    The first version shifted the current price by (deviation then - deviation
+    now) only. Live on 24.10.2026 that went wrong: a station usually spikes at
+    noon on Saturdays, the spike was late, so its normal noon price was taken
+    as "spike already included" and the evening forecast dropped 15 ct too
+    low. Anchoring on the median plus the floor below avoids that; backtests
+    on real data were as good or better in every window.
     Hours without a trusted deviation are skipped for that station.
     """
     now_bucket = bucket_of(now, tz)
@@ -107,9 +124,13 @@ def build_forecast(
             if profile is None:
                 continue
             dev_now, dev_then = profile.deviation(now_bucket), profile.deviation(bucket)
-            if dev_now is None or dev_then is None:
+            reference, floor = profile.reference(), profile.recent_min()
+            if dev_now is None or dev_then is None or reference is None:
                 continue
-            expected = price - dev_now + dev_then
+            offset = price - (reference + dev_now)
+            expected = reference + dev_then + offset * math.exp(-step / CURRENT_OFFSET_DECAY_H)
+            if floor is not None:
+                expected = max(expected, floor - MAX_BELOW_RECENT_MIN)
             if best is None or expected < best.price:
                 best = ForecastPoint(moment, expected, station)
         if best is not None:

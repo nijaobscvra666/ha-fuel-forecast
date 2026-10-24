@@ -209,6 +209,25 @@ class RecommendTest(unittest.TestCase):
         self.assertEqual(result.recommendation, Recommendation.NO_PRICES)
         self.assertGreater(result.coverage, 0.9)
 
+    def test_late_spike_does_not_drag_forecast_down(self):
+        # Live 24.10.2026: a station usually spikes at noon, today the spike was
+        # late. Its normal noon price must not be read as "spike included".
+        def spiky(local_hour):
+            return 0.15 if local_hour == 12 else 0.0
+        profile = StationProfile()
+        start = datetime(2026, 9, 7, tzinfo=BERLIN)
+        moment = start
+        while moment < start + timedelta(days=21):
+            profile.add_sample(moment, 1.90 + spiky(moment.astimezone(BERLIN).hour), BERLIN)
+            moment += timedelta(minutes=10)
+        now = moment.replace(hour=12, minute=5)  # a Monday at 12:05, no spike yet
+        for minute in range(0, 5):
+            profile.add_sample(now - timedelta(minutes=5 - minute), 1.90, BERLIN)
+        result = recommend({"s": profile}, {"s": 1.90}, now, BERLIN, Settings())
+        # The old model expected ~1.75 later on (1.90 - 0.15) and said "wait".
+        self.assertGreaterEqual(result.lowest_price, profile.recent_min() - 0.02)
+        self.assertEqual(result.recommendation, Recommendation.FILL_NOW)
+
     def test_forecast_has_one_point_per_hour(self):
         now = self.at(8)
         points = build_forecast(self.profiles, {"sensor.cheap": 1.71}, now, BERLIN, 24)

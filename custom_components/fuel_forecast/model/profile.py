@@ -111,6 +111,10 @@ class StationProfile:
                 return price
         return None
 
+    def recent_min(self) -> float | None:
+        """Lowest price in the trailing window."""
+        return min((p for _, p, _ in self.recent), default=None)
+
     def deviation(self, index: int) -> float | None:
         """Learned deviation for a bucket, None if not trusted yet."""
         bucket = self.buckets[index]
