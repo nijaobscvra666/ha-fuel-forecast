@@ -70,7 +70,7 @@
           "fill_now": "Fill up now",
           "wait": "Wait",
           "no_need": "No need to fill up",
-          "unavailable": "No prices"
+          "no_prices": "No prices"
         }
       },
       "saving_per_litre": {

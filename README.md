@@ -50,7 +50,7 @@ Entity ids below assume English as system language; Home Assistant builds them f
 
 | Entity | Content |
 |---|---|
-| `sensor.<name>_recommendation` | `fill_now`, `wait`, `no_need`, `learning` or `unavailable` |
+| `sensor.<name>_recommendation` | `fill_now`, `wait`, `no_need`, `learning` or `no_prices` |
 | `binary_sensor.<name>_good_time_to_fill_up` | On while filling up now is recommended – handy for automations |
 | `sensor.<name>_best_price_now` | Cheapest price right now, station as attribute |
 | `sensor.<name>_lowest_price` | Expected lowest price, with the hourly forecast as attribute |

@@ -189,7 +189,7 @@ class RecommendTest(unittest.TestCase):
         self.assertEqual(result.best_now_price, 1.7)
         self.assertEqual(
             recommend(self.profiles, {}, now, BERLIN, Settings()).recommendation,
-            Recommendation.UNAVAILABLE,
+            Recommendation.NO_PRICES,
         )
 
     def test_unknown_station_among_known_ones(self):

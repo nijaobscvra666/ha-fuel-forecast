@@ -22,7 +22,8 @@ class Recommendation(StrEnum):
     FILL_NOW = "fill_now"
     WAIT = "wait"
     NO_NEED = "no_need"
-    UNAVAILABLE = "unavailable"
+    # Not "unavailable": that word is reserved for HA entity availability.
+    NO_PRICES = "no_prices"
 
 
 @dataclass
@@ -122,7 +123,7 @@ def recommend(
     settings: Settings,
 ) -> Result:
     if not current:
-        return Result(Recommendation.UNAVAILABLE)
+        return Result(Recommendation.NO_PRICES)
 
     best_now_station = min(current, key=current.__getitem__)
     best_now_price = current[best_now_station]

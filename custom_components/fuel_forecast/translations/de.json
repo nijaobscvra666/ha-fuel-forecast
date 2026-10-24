@@ -70,7 +70,7 @@
           "fill_now": "Jetzt tanken",
           "wait": "Warten",
           "no_need": "Tanken nicht nötig",
-          "unavailable": "Keine Preise"
+          "no_prices": "Keine Preise"
         }
       },
       "saving_per_litre": {
