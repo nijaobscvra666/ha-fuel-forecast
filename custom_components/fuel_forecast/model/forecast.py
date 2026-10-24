@@ -25,6 +25,12 @@ MAX_BELOW_RECENT_MIN = 0.02
 # Below this share of learned buckets the forecast is not trusted.
 MIN_COVERAGE = 0.5
 
+# Hysteresis: once "wait" is recommended it stays until the saving drops
+# below this share of the minimum saving (3 ct → stays "wait" down to 2 ct).
+# Without it the recommendation flipped every few minutes while the saving
+# hovered around the threshold (live: 2.7 / 3.0 / 3.1 / 2.8 ct in two hours).
+WAIT_HOLD_SHARE = 2 / 3
+
 
 class Recommendation(StrEnum):
     LEARNING = "learning"
@@ -54,6 +60,8 @@ class Settings:
     no_need_level: float = 60.0
     # At or below this level fill up now even if waiting would be cheaper.
     urgent_level: float = 15.0
+    # Last recommendation, for the hysteresis around min_saving.
+    previous: Recommendation | None = None
 
 
 @dataclass
@@ -197,7 +205,10 @@ def recommend(
         result.recommendation = Recommendation.FILL_NOW
     elif level is not None and level >= settings.no_need_level:
         result.recommendation = Recommendation.NO_NEED
-    elif saving >= settings.min_saving:
+    elif saving >= settings.min_saving or (
+        settings.previous is Recommendation.WAIT
+        and saving >= settings.min_saving * WAIT_HOLD_SHARE
+    ):
         result.recommendation = Recommendation.WAIT
     else:
         result.recommendation = Recommendation.FILL_NOW

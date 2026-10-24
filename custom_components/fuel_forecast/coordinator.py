@@ -210,6 +210,7 @@ class FuelForecastCoordinator(DataUpdateCoordinator[Result]):
             fuel_level=self._fuel_level(),
             no_need_level=float(opts.get(CONF_NO_NEED_LEVEL, DEFAULT_NO_NEED_LEVEL)),
             urgent_level=float(opts.get(CONF_URGENT_LEVEL, DEFAULT_URGENT_LEVEL)),
+            previous=self.data.recommendation if self.data else None,
         )
 
     def _compute(self) -> Result:

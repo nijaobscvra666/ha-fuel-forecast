@@ -181,6 +181,30 @@ class RecommendTest(unittest.TestCase):
         self.assertEqual(half.recommendation, Recommendation.WAIT)
         self.assertAlmostEqual(half.saving_per_fill, 20 * half.saving_per_litre)
 
+    def test_wait_has_hysteresis(self):
+        now = self.at(8)
+        current = {"sensor.cheap": 1.71}
+        saving = recommend(self.profiles, current, now, BERLIN, Settings()).saving_per_litre
+        # Saving just below the threshold: keeps "wait", but does not start it.
+        just_below = saving / 0.85
+        held = recommend(
+            self.profiles, current, now, BERLIN,
+            Settings(min_saving=just_below, previous=Recommendation.WAIT),
+        )
+        self.assertEqual(held.recommendation, Recommendation.WAIT)
+        for previous in (None, Recommendation.FILL_NOW):
+            fresh = recommend(
+                self.profiles, current, now, BERLIN,
+                Settings(min_saving=just_below, previous=previous),
+            )
+            self.assertEqual(fresh.recommendation, Recommendation.FILL_NOW)
+        # Well below the threshold: "wait" ends.
+        dropped = recommend(
+            self.profiles, current, now, BERLIN,
+            Settings(min_saving=saving / 0.5, previous=Recommendation.WAIT),
+        )
+        self.assertEqual(dropped.recommendation, Recommendation.FILL_NOW)
+
     def test_learning_and_unavailable(self):
         now = self.at(8)
         fresh = {"sensor.new": StationProfile()}

@@ -36,7 +36,7 @@ Copy `custom_components/fuel_forecast` into your `config/custom_components/` fol
 |---|---|
 | Name | For example "Super E5". Entity ids are built from it. |
 | Price sensors | The stations you would actually drive to, all for **one** fuel type and in the same unit. |
-| Minimum saving | Waiting is only recommended if the expected price is at least this much lower (default 3 ct/l). |
+| Minimum saving | Waiting is only recommended if the expected price is at least this much lower (default 3 ct/l). Once it says wait, it keeps saying so until the saving drops below two thirds of this (2 ct), so it does not flip back and forth around the threshold. |
 | Look ahead | How many hours ahead to search for a cheaper moment (default 24). |
 | Tank size | Optional, needed for the saving per fill-up. |
 | Fuel level sensor | Optional, a sensor in % (or litres together with the tank size). |
