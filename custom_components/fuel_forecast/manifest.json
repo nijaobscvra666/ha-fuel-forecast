@@ -1,9 +1,17 @@
 {
   "domain": "fuel_forecast",
   "name": "Fuel Forecast",
-  "codeowners": ["@nijaobscvra666"],
+  "categories": [
+    "local_services",
+    "helpers.calculate_value"
+  ],
+  "codeowners": [
+    "@nijaobscvra666"
+  ],
   "config_flow": true,
-  "dependencies": ["recorder"],
+  "dependencies": [
+    "recorder"
+  ],
   "documentation": "https://github.com/nijaobscvra666/ha-fuel-forecast",
   "integration_type": "service",
   "iot_class": "calculated",
