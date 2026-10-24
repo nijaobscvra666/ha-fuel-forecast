@@ -1,0 +1,10 @@
+# Simple card with the most useful entities (works without custom cards).
+type: entities
+title: Fuel Forecast
+entities:
+  - entity: sensor.super_e5_recommendation
+  - entity: sensor.super_e5_best_price_now
+  - entity: sensor.super_e5_lowest_price
+  - entity: sensor.super_e5_cheapest_time
+    format: time
+  - entity: sensor.super_e5_saving_per_fill_up

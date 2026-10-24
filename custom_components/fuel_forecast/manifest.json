@@ -1,0 +1,13 @@
+{
+  "domain": "fuel_forecast",
+  "name": "Fuel Forecast",
+  "codeowners": ["@nijaobscvra666"],
+  "config_flow": true,
+  "dependencies": ["recorder"],
+  "documentation": "https://github.com/nijaobscvra666/ha-fuel-forecast",
+  "integration_type": "service",
+  "iot_class": "calculated",
+  "issue_tracker": "https://github.com/nijaobscvra666/ha-fuel-forecast/issues",
+  "requirements": [],
+  "version": "0.1.0"
+}

@@ -1,0 +1,87 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Spritpreis-Prognose",
+        "description": "Wähle die Preis-Sensoren der Tankstellen, die du für eine Spritsorte nutzt (z.B. von Tankerkönig). Fuel Forecast lernt, wann jede davon meist am günstigsten ist, und sagt dir, ob du jetzt tanken oder warten solltest.",
+        "data": {
+          "name": "Name",
+          "stations": "Preis-Sensoren",
+          "min_saving": "Mindestersparnis fürs Warten (Cent pro Liter)",
+          "horizon": "Vorausschau",
+          "tank_size": "Tankgröße (Liter)",
+          "fuel_level_entity": "Tankstand-Sensor (optional)",
+          "no_need_level": "Keine Empfehlung ab Tankstand",
+          "urgent_level": "Sofort tanken unter Tankstand"
+        },
+        "data_description": {
+          "stations": "Alle Sensoren müssen dieselbe Einheit haben. Es werden nur die vorhandenen Sensoren gelesen, beim Preisdienst wird nichts zusätzlich abgefragt.",
+          "min_saving": "Warten wird nur empfohlen, wenn der erwartete Preis mindestens so viel niedriger ist.",
+          "fuel_level_entity": "Ein Sensor in % oder in Litern (Liter brauchen die Tankgröße)."
+        }
+      }
+    },
+    "error": {
+      "station_not_found": "Einer der gewählten Sensoren existiert nicht.",
+      "mixed_units": "Die gewählten Sensoren haben unterschiedliche Einheiten.",
+      "levels": "Der Tankstand für „sofort tanken“ muss unter dem für „keine Empfehlung“ liegen."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "stations": "Preis-Sensoren",
+          "min_saving": "Mindestersparnis fürs Warten (Cent pro Liter)",
+          "horizon": "Vorausschau",
+          "tank_size": "Tankgröße (Liter)",
+          "fuel_level_entity": "Tankstand-Sensor (optional)",
+          "no_need_level": "Keine Empfehlung ab Tankstand",
+          "urgent_level": "Sofort tanken unter Tankstand"
+        }
+      }
+    },
+    "error": {
+      "station_not_found": "Einer der gewählten Sensoren existiert nicht.",
+      "mixed_units": "Die gewählten Sensoren haben unterschiedliche Einheiten.",
+      "levels": "Der Tankstand für „sofort tanken“ muss unter dem für „keine Empfehlung“ liegen."
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "good_window": {
+        "name": "Guter Moment zum Tanken"
+      }
+    },
+    "sensor": {
+      "best_price_now": {
+        "name": "Bester Preis jetzt"
+      },
+      "lowest_price": {
+        "name": "Erwarteter Tiefstpreis"
+      },
+      "lowest_time": {
+        "name": "Günstigste Zeit"
+      },
+      "recommendation": {
+        "name": "Empfehlung",
+        "state": {
+          "learning": "Lernt noch",
+          "fill_now": "Jetzt tanken",
+          "wait": "Warten",
+          "no_need": "Tanken nicht nötig",
+          "unavailable": "Keine Preise"
+        }
+      },
+      "saving_per_litre": {
+        "name": "Ersparnis pro Liter"
+      },
+      "saving_per_fill": {
+        "name": "Ersparnis pro Tankfüllung"
+      },
+      "coverage": {
+        "name": "Gelerntes Preismuster"
+      }
+    }
+  }
+}

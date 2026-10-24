@@ -1,0 +1,21 @@
+# Notify when it is a good time to fill up and the car needs fuel.
+# Replace the entity ids with the ones of your Fuel Forecast entry.
+alias: "Fuel Forecast – good time to fill up"
+mode: single
+triggers:
+  - trigger: state
+    entity_id: binary_sensor.super_e5_good_time_to_fill_up
+    to: "on"
+conditions:
+  - condition: not
+    conditions:
+      - condition: state
+        entity_id: sensor.super_e5_recommendation
+        state: no_need
+actions:
+  - action: notify.notify
+    data:
+      title: "⛽ Good time to fill up"
+      message: >-
+        {{ state_attr('binary_sensor.super_e5_good_time_to_fill_up', 'station') }}:
+        {{ states('sensor.super_e5_best_price_now') }} {{ state_attr('sensor.super_e5_best_price_now', 'unit_of_measurement') }}

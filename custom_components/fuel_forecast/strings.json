@@ -1,0 +1,87 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Fuel Forecast",
+        "description": "Pick the price sensors of the stations you use for one fuel type (for example from Tankerkönig). Fuel Forecast learns when each of them is usually cheapest and tells you whether to fill up now or wait.",
+        "data": {
+          "name": "Name",
+          "stations": "Price sensors",
+          "min_saving": "Minimum saving to wait for (cents per litre)",
+          "horizon": "Look ahead",
+          "tank_size": "Tank size (litres)",
+          "fuel_level_entity": "Fuel level sensor (optional)",
+          "no_need_level": "No recommendation above fuel level",
+          "urgent_level": "Fill up now below fuel level"
+        },
+        "data_description": {
+          "stations": "All sensors must report the same unit. Only the existing sensors are read, no extra requests are sent to the price service.",
+          "min_saving": "Only recommend waiting if the expected price is at least this much lower.",
+          "fuel_level_entity": "A sensor in % or in litres (litres need the tank size)."
+        }
+      }
+    },
+    "error": {
+      "station_not_found": "One of the selected sensors does not exist.",
+      "mixed_units": "The selected sensors use different units.",
+      "levels": "The urgent fuel level must be below the no-recommendation level."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "stations": "Price sensors",
+          "min_saving": "Minimum saving to wait for (cents per litre)",
+          "horizon": "Look ahead",
+          "tank_size": "Tank size (litres)",
+          "fuel_level_entity": "Fuel level sensor (optional)",
+          "no_need_level": "No recommendation above fuel level",
+          "urgent_level": "Fill up now below fuel level"
+        }
+      }
+    },
+    "error": {
+      "station_not_found": "One of the selected sensors does not exist.",
+      "mixed_units": "The selected sensors use different units.",
+      "levels": "The urgent fuel level must be below the no-recommendation level."
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "good_window": {
+        "name": "Good time to fill up"
+      }
+    },
+    "sensor": {
+      "best_price_now": {
+        "name": "Best price now"
+      },
+      "lowest_price": {
+        "name": "Expected lowest price"
+      },
+      "lowest_time": {
+        "name": "Cheapest time"
+      },
+      "recommendation": {
+        "name": "Recommendation",
+        "state": {
+          "learning": "Still learning",
+          "fill_now": "Fill up now",
+          "wait": "Wait",
+          "no_need": "No need to fill up",
+          "unavailable": "No prices"
+        }
+      },
+      "saving_per_litre": {
+        "name": "Saving per litre"
+      },
+      "saving_per_fill": {
+        "name": "Saving per fill-up"
+      },
+      "coverage": {
+        "name": "Learned pattern"
+      }
+    }
+  }
+}
