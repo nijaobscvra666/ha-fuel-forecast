@@ -7,6 +7,7 @@
 - Brand icon for HACS and the Home Assistant UI.
 - Translations: French, Italian, Spanish, Dutch, Portuguese.
 - Savings are now "Saving if you wait (per litre / full tank)", per litre in cents, and they – like the recommendation – show what they compare: price and station now vs. expected price, station and time.
+- Price sensors keep their unit while the price source is down.
 - Cleaner station names (no "None" house numbers, no double spaces).
 
 ## 0.1.0

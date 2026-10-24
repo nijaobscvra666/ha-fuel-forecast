@@ -106,4 +106,11 @@ async def test_setup_creates_entities_while_learning(hass: HomeAssistant) -> Non
     await hass.async_block_till_done()
     assert hass.states.get("sensor.super_e5_best_price_now").attributes["station"] == "ELAN Pommernstr. 16"
 
+    # Source down: price sensors keep their unit (no None <-> "€" flip in statistics).
+    for station in STATIONS:
+        hass.states.async_set(station, "unavailable", {})
+    await hass.async_block_till_done()
+    assert hass.states.get("sensor.super_e5_recommendation").state == "no_prices"
+    assert hass.states.get("sensor.super_e5_best_price_now").attributes["unit_of_measurement"] == "€"
+
     assert await hass.config_entries.async_unload(entry.entry_id)

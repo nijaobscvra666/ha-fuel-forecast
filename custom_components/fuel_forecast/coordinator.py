@@ -73,6 +73,9 @@ class FuelForecastCoordinator(DataUpdateCoordinator[Result]):
             hass, STORAGE_VERSION, f"{DOMAIN}.{entry.entry_id}"
         )
         self.profiles: dict[str, StationProfile] = {}
+        # Last known unit, so price sensors keep it while the source is down
+        # (a unit flipping between None and "€" upsets the long-term statistics).
+        self._last_unit: str | None = None
         self.imported_from_statistics = False
 
     @property
@@ -85,8 +88,9 @@ class FuelForecastCoordinator(DataUpdateCoordinator[Result]):
             if (state := self.hass.states.get(entity_id)) and (
                 unit := state.attributes.get(ATTR_UNIT_OF_MEASUREMENT)
             ):
+                self._last_unit = unit
                 return unit
-        return None
+        return self._last_unit
 
     def station_name(self, entity_id: str | None) -> str | None:
         if entity_id is None:
@@ -108,6 +112,7 @@ class FuelForecastCoordinator(DataUpdateCoordinator[Result]):
     async def async_setup(self) -> None:
         """Load the stored profiles, bootstrap from statistics on first run."""
         stored = await self._store.async_load() or {}
+        self._last_unit = stored.get("unit")
         self.profiles = {
             entity_id: StationProfile.from_dict(data)
             for entity_id, data in stored.get("profiles", {}).items()
@@ -243,15 +248,19 @@ class FuelForecastCoordinator(DataUpdateCoordinator[Result]):
         for entity_id in set(self.profiles) - set(self.stations):
             del self.profiles[entity_id]
         self._store.async_delay_save(
-            lambda: {"profiles": {k: p.as_dict() for k, p in self.profiles.items()}},
+            self._data_to_store,
             SAVE_DELAY,
         )
 
+    def _data_to_store(self) -> dict[str, Any]:
+        return {
+            "unit": self._last_unit,
+            "profiles": {k: p.as_dict() for k, p in self.profiles.items()},
+        }
+
     async def async_shutdown(self) -> None:
         await super().async_shutdown()
-        await self._store.async_save(
-            {"profiles": {k: p.as_dict() for k, p in self.profiles.items()}}
-        )
+        await self._store.async_save(self._data_to_store())
 
     async def async_remove_store(self) -> None:
         await self._store.async_remove()
