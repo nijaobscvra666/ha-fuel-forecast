@@ -122,21 +122,25 @@ def recommend(
     tz: tzinfo,
     settings: Settings,
 ) -> Result:
+    # Reported coverage: how much is learned over all stations of the group,
+    # also while no prices arrive (shows that learning is not lost).
+    overall = sum(p.coverage() for p in profiles.values()) / len(profiles) if profiles else 0.0
     if not current:
-        return Result(Recommendation.NO_PRICES)
+        return Result(Recommendation.NO_PRICES, coverage=overall)
 
     best_now_station = min(current, key=current.__getitem__)
     best_now_price = current[best_now_station]
+    # Trust is judged on the stations that have a price right now.
     used = [profiles[s] for s in current if s in profiles]
-    coverage = sum(p.coverage() for p in used) / len(current) if used else 0.0
+    trusted = sum(p.coverage() for p in used) / len(current) if used else 0.0
 
     result = Result(
         Recommendation.LEARNING,
         best_now_price=best_now_price,
         best_now_station=best_now_station,
-        coverage=coverage,
+        coverage=overall,
     )
-    if coverage < MIN_COVERAGE:
+    if trusted < MIN_COVERAGE:
         return result
 
     points = build_forecast(profiles, current, now, tz, settings.horizon_hours)

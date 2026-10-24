@@ -198,7 +198,16 @@ class RecommendTest(unittest.TestCase):
         current = {"sensor.cheap": 1.71, "sensor.brand_new": 1.60}
         result = recommend(self.profiles, current, now, BERLIN, Settings())
         self.assertEqual(result.best_now_station, "sensor.brand_new")
-        self.assertEqual(result.coverage, self.cheap.coverage() / 2)
+        # The unknown station has no pattern, so only the known one is forecast.
+        self.assertTrue(all(p.station == "sensor.cheap" for p in result.forecast))
+        # Reported coverage covers all stations of the group.
+        expected = (self.cheap.coverage() + self.dear.coverage()) / 2
+        self.assertAlmostEqual(result.coverage, expected)
+
+    def test_coverage_reported_without_prices(self):
+        result = recommend(self.profiles, {}, self.at(8), BERLIN, Settings())
+        self.assertEqual(result.recommendation, Recommendation.NO_PRICES)
+        self.assertGreater(result.coverage, 0.9)
 
     def test_forecast_has_one_point_per_hour(self):
         now = self.at(8)
