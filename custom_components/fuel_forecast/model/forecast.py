@@ -190,7 +190,7 @@ def recommend(
             (p for p in points if p.price <= lowest.price + tolerance),
             key=lambda p: p.time,
         )
-    if lowest is None or lowest.price > best_now_price - tolerance:
+    if lowest is None or lowest.price >= best_now_price - tolerance:
         result.lowest_price, result.lowest_time, result.lowest_station = (
             best_now_price,
             now,

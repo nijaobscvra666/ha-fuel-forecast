@@ -38,7 +38,7 @@ Copy `custom_components/fuel_forecast` into your `config/custom_components/` fol
 |---|---|
 | Name | For example "Super E5". Entity ids are built from it. |
 | Price sensors | The stations you would actually drive to, all for **one** fuel type and in the same unit. |
-| Minimum saving | Waiting is only recommended if the expected price is at least this much lower (default 3 ct/l). Once it says wait, it keeps saying so until the saving drops below two thirds of this (2 ct), so it does not flip back and forth around the threshold. |
+| Minimum saving | Waiting is only recommended if the expected price is at least this much lower (default 3 ct/l). |
 | Look ahead | How many hours ahead to search for a cheaper moment (default 24). |
 | Tank size | Optional, needed for the saving per fill-up (litres). |
 | Fuel level sensor | Optional, a sensor in % (or litres together with the tank size). |
@@ -56,21 +56,27 @@ Entity ids below assume English as system language; Home Assistant builds them f
 | `binary_sensor.<name>_good_time_to_fill_up` | `on` while the recommendation is `fill_now` – handy for automations | `station`, `price_now`, `urgent` |
 | `sensor.<name>_best_price_now` | Cheapest price right now | `station`, `entity_id` (of the price sensor) |
 | `sensor.<name>_lowest_price` | Expected lowest price within the look-ahead | `station`, `entity_id`, `forecast` (hourly list of `time` and `price`, not stored in the history) |
-| `sensor.<name>_cheapest_time` | When that lowest price is expected: the earliest hour within 1/6 of the minimum saving (0.5 ct) of the lowest, or now if nothing is at least that much cheaper – so it does not jump between hours that differ by fractions of a cent | – |
+| `sensor.<name>_cheapest_time` | When that lowest price is expected (now, if nothing is noticeably cheaper) | – |
 | `sensor.<name>_saving_if_you_wait_per_litre` | What waiting for the expected low would save, in cents (ct/¢/p) per litre | comparison (see below) |
 | `sensor.<name>_saving_if_you_wait_full_tank` | The same for a fill-up: the missing litres if a fuel level sensor is set, otherwise the full tank | comparison, `litres` |
 | `sensor.<name>_learned_pattern` | Diagnostic: how much of the pattern is learned (%) | – |
 
-**Which stations are compared is in the attributes, not in the state.** The state of a saving sensor is just the number (for example `0.7` ct); open the entity and expand *Attributes* to see what it compares, or use them in templates:
+### Where to find the stations
+
+**Which stations are compared is in the attributes, not in the state.** The state of a saving sensor is just the number (for example `0.7` ct). Open the entity and expand *Attributes* to see what it compares, or use them in templates:
 
 | Attribute | Meaning |
 |---|---|
 | `price_now`, `station_now` | Best price and station right now |
 | `expected_price`, `expected_station`, `expected_time` | Expected lowest price, at which station and when |
 
-So a saving of 0.7 ct reads as "fill up now at ELAN for 2.079 or wait until 07:00 for 2.072 at OIL". The [card example](examples/card_now_vs_expected.yaml) shows this on a dashboard without opening the attributes; in a template: `{{ state_attr('sensor.super_e5_recommendation', 'expected_station') }}`.
+So a saving of 0.7 ct reads as "fill up now at ELAN for 2.079 or wait until 07:00 for 2.072 at OIL". The [card example](examples/card_now_vs_expected.yaml) shows this on a dashboard without opening the attributes. In a template (entry named "Super E5"): `{{ state_attr('sensor.super_e5_recommendation', 'expected_station') }}`.
 
-The recommendation stays `learning` until at least half of the hourly pattern is known – usually after about three days, immediately if long-term statistics exist.
+### Good to know
+
+- **Learning:** the recommendation stays `learning` until at least half of the hourly pattern is known – usually after about three days, immediately if long-term statistics exist.
+- **No flip-flopping:** once it says *wait*, it keeps saying so until the saving drops below two thirds of the minimum saving (2 ct by default).
+- **Small differences are ignored:** the cheapest time is *now* unless something is at least 1/6 of the minimum saving (0.5 ct) cheaper. Otherwise it is the earliest hour that is about as cheap as the lowest, so it does not jump between hours a fraction of a cent apart.
 
 See [`examples/`](examples) for dashboard cards (now vs. expected, forecast chart) and notification automations (good time, worth waiting, cheapest time reminder, tank nearly empty).
 
@@ -84,7 +90,13 @@ Everything is computed inside your Home Assistant. Diagnostics downloads contain
 
 ## Deutsch
 
-**Jetzt tanken oder warten?** Fuel Forecast lernt aus deinen vorhandenen Spritpreis-Sensoren (z.B. Tankerkönig), wann deine Tankstellen meist am günstigsten sind – getrennt nach Werktag und Wochenende – und empfiehlt, ob sich Warten lohnt. Keine Cloud, keine zusätzlichen Abfragen beim Preisdienst (keine IP-Sperre), optional mit Tankstand vom Auto. Welche Tankstellen verglichen werden (jetzt vs. erwartet, mit Preis und Uhrzeit), steht in den **Attributen** der Empfehlung und der Ersparnis-Sensoren, nicht im Zustand – siehe *Entities* oben und die [Beispiele](examples). Einrichtung über *Einstellungen → Geräte & Dienste → Integration hinzufügen → Fuel Forecast*; die Oberfläche ist auf Deutsch übersetzt.
+**Jetzt tanken oder warten?** Fuel Forecast lernt aus deinen vorhandenen Spritpreis-Sensoren (z.B. Tankerkönig), wann deine Tankstellen meist am günstigsten sind – getrennt nach Werktag und Wochenende – und empfiehlt, ob sich Warten lohnt.
+
+- Keine Cloud, keine zusätzlichen Abfragen beim Preisdienst (also auch keine IP-Sperre).
+- Optional mit Tankstand vom Auto: bei vollem Tank keine Empfehlung, bei fast leerem „jetzt tanken“.
+- Welche Tankstellen verglichen werden (jetzt vs. erwartet, mit Preis und Uhrzeit), steht in den **Attributen** der Empfehlung und der Ersparnis-Sensoren, nicht im Zustand – siehe *Entities* oben und die [Beispiele](examples).
+
+Einrichtung über *Einstellungen → Geräte & Dienste → Integration hinzufügen → Fuel Forecast*; die Oberfläche ist auf Deutsch übersetzt. Alle Details stehen oben auf Englisch.
 
 ## License
 
