@@ -83,6 +83,29 @@ class ProfileTest(unittest.TestCase):
             profile.add_sample(start + timedelta(minutes=10 * i), price, BERLIN)
         self.assertEqual(profile.reference(), 1.70)
 
+    def test_closed_at_night_is_fully_learned(self):
+        # A station without prices 22:00-06:00 never learns those hours; its
+        # coverage refers to the opening hours only.
+        profile = StationProfile()
+        moment = datetime(2026, 9, 7, 0, 0, tzinfo=BERLIN)
+        end = moment + timedelta(days=21)
+        while moment < end:
+            hour = moment.astimezone(BERLIN).hour
+            if 6 <= hour < 22:
+                profile.add_sample(moment, round(1.70 + pattern(hour), 3), BERLIN)
+            moment += timedelta(minutes=10)
+        self.assertEqual(profile.coverage(), 1.0)
+        self.assertIsNone(profile.deviation(2))
+
+    def test_coverage_rises_while_learning(self):
+        profile = StationProfile()
+        start = datetime(2026, 9, 7, 0, 0, tzinfo=BERLIN)
+        feed(profile, start, 1, base=1.70)
+        after_one_day = profile.coverage()
+        feed(profile, start + timedelta(days=1), 6, base=1.70)
+        self.assertLess(after_one_day, 0.5)
+        self.assertGreater(profile.coverage(), after_one_day)
+
     def test_needs_reference_span_before_learning(self):
         profile = StationProfile()
         start = datetime(2026, 9, 7, 0, 0, tzinfo=BERLIN)

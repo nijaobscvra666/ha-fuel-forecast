@@ -30,6 +30,12 @@ BUCKETS = 48  # 24 hours on working days + 24 hours on weekends
 MAX_WEIGHT = 180.0
 # A bucket is trusted after about three days of samples.
 MIN_WEIGHT = 18.0
+# A bucket counts as an opening hour of the station once it has half a day
+# of samples. Most stations close at night and never report a price then;
+# without this the learned share of such a station could never pass ~70 %
+# (live: 14 of 18 stations closed at night, shown as 78 % although fully
+# learned). The margin ignores a stray sample right at opening time.
+MIN_OPEN_WEIGHT = MIN_WEIGHT / 6
 
 REFERENCE_WINDOW = timedelta(hours=24)
 # Only learn once the trailing window spans this long, otherwise the
@@ -121,8 +127,12 @@ class StationProfile:
         return bucket.mean if bucket.weight >= MIN_WEIGHT else None
 
     def coverage(self) -> float:
-        """Share of the buckets (0..1) that is learned well enough."""
-        return sum(b.weight >= MIN_WEIGHT for b in self.buckets) / BUCKETS
+        """Share (0..1) of the station's opening hours that is learned well
+        enough. Hours without prices (station closed) do not count."""
+        open_hours = [b for b in self.buckets if b.weight >= MIN_OPEN_WEIGHT]
+        if not open_hours:
+            return 0.0
+        return sum(b.weight >= MIN_WEIGHT for b in open_hours) / len(open_hours)
 
     def as_dict(self) -> dict:
         return {

@@ -9,6 +9,7 @@
 - Savings are now "Saving if you wait (per litre / full tank)", per litre in cents, and they – like the recommendation – show what they compare: price and station now vs. expected price, station and time.
 - Forecast anchored on each station's 24 h median instead of the current hour only, and never more than 2 ct below the station's lowest price of the last 24 h. Fixes a live case where a late noon spike made the forecast drop 15 ct too low and recommend waiting.
 - Recommendation no longer flips between wait and fill now while the saving hovers around the minimum: wait is kept until the saving drops below two thirds of the minimum.
+- "Learned pattern" only counts the hours in which a station reports prices. Stations closed at night showed about 70 % forever although everything that can be learned was learned.
 - Cheapest time no longer jumps between hours that differ by fractions of a cent: it is now, unless something is at least 1/6 of the minimum saving (0.5 ct) cheaper, and otherwise the earliest hour about as cheap as the lowest.
 - Diagnostics no longer contain the entity id of the fuel level sensor.
 - README: states vs. attributes explained per entity, backtest numbers updated for the current model.

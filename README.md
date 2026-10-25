@@ -59,7 +59,7 @@ Entity ids below assume English as system language; Home Assistant builds them f
 | `sensor.<name>_cheapest_time` | When that lowest price is expected (now, if nothing is noticeably cheaper) | – |
 | `sensor.<name>_saving_if_you_wait_per_litre` | What waiting for the expected low would save, in cents (ct/¢/p) per litre | comparison (see below) |
 | `sensor.<name>_saving_if_you_wait_full_tank` | The same for a fill-up: the missing litres if a fuel level sensor is set, otherwise the full tank | comparison, `litres` |
-| `sensor.<name>_learned_pattern` | Diagnostic: how much of the pattern is learned (%) | – |
+| `sensor.<name>_learned_pattern` | Diagnostic: how much of the hourly pattern is learned (%), counting only the hours in which the stations report prices | – |
 
 ### Where to find the stations
 
@@ -74,7 +74,7 @@ So a saving of 0.7 ct reads as "fill up now at ELAN for 2.079 or wait until 07:0
 
 ### Good to know
 
-- **Learning:** the recommendation stays `learning` until at least half of the hourly pattern is known – usually after about three days, immediately if long-term statistics exist.
+- **Learning:** the recommendation stays `learning` until at least half of the hourly pattern is known – usually after about three days, immediately if long-term statistics exist. Hours in which a station is closed (no price) do not count, so stations that close at night still reach 100 %.
 - **No flip-flopping:** once it says *wait*, it keeps saying so until the saving drops below two thirds of the minimum saving (2 ct by default).
 - **Small differences are ignored:** the cheapest time is *now* unless something is at least 1/6 of the minimum saving (0.5 ct) cheaper. Otherwise it is the earliest hour that is about as cheap as the lowest, so it does not jump between hours a fraction of a cent apart.
 
