@@ -1,0 +1,36 @@
+# Chart: the last 12 hours of the best price and the forecast for the next 24.
+# Needs the custom card "apexcharts-card" (HACS → Frontend).
+# Replace super_e5 with the prefix of your entry.
+type: custom:apexcharts-card
+header:
+  show: true
+  title: Fuel price forecast
+  show_states: true
+graph_span: 36h
+span:
+  end: hour
+  offset: +24h
+now:
+  show: true
+  label: Now
+yaxis:
+  - decimals: 3
+series:
+  - entity: sensor.super_e5_best_price_now
+    name: Best price
+    type: line
+    curve: stepline
+    extend_to: now
+    group_by:
+      func: min
+      duration: 30min
+  - entity: sensor.super_e5_lowest_price
+    name: Forecast
+    type: line
+    curve: smooth
+    stroke_dash: 4
+    show:
+      in_header: false
+    # The hourly forecast is an attribute (it is not stored in the history).
+    data_generator: |
+      return (entity.attributes.forecast || []).map(p => [new Date(p.time).getTime(), p.price]);

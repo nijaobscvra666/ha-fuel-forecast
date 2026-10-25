@@ -1,0 +1,22 @@
+# Tell me when it is worth waiting – with how much, where and until when.
+# Replace super_e5 with the prefix of your entry and notify.notify with your
+# notify action (e.g. notify.mobile_app_<phone>).
+alias: "Fuel Forecast – worth waiting"
+mode: single
+triggers:
+  - trigger: state
+    entity_id: sensor.super_e5_recommendation
+    from: fill_now
+    to: wait
+actions:
+  - variables:
+      a: "{{ states.sensor.super_e5_recommendation.attributes }}"
+      unit: "{{ state_attr('sensor.super_e5_best_price_now', 'unit_of_measurement') }}"
+  - action: notify.notify
+    data:
+      title: "⛽ Better wait"
+      message: >-
+        Now {{ a.station_now }} {{ '%.3f' % a.price_now }} {{ unit }}.
+        Expected {{ as_timestamp(a.expected_time) | timestamp_custom('%a %H:%M') }}:
+        {{ a.expected_station }} {{ '%.3f' % a.expected_price }} {{ unit }}
+        ({{ a.saving_per_litre }} {{ state_attr('sensor.super_e5_saving_if_you_wait_per_litre', 'unit_of_measurement') }} per litre less).

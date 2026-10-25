@@ -1,0 +1,26 @@
+# Markdown card: what to do, where it is cheapest now and where/when it is
+# expected to be cheapest – without opening the attributes.
+# Works without custom cards. Change `p` to the prefix of your entry
+# (the name you gave it, e.g. "Super E5" → super_e5).
+type: markdown
+content: >-
+  {% set p = 'super_e5' %}
+  {% set rec = 'sensor.' ~ p ~ '_recommendation' %}
+  {% set a = states[rec].attributes if states[rec] else {} %}
+  {% set unit = state_attr('sensor.' ~ p ~ '_best_price_now', 'unit_of_measurement') or '' %}
+  ## ⛽ {{ state_translated(rec) }}{{ ' – urgent!' if a.urgent }}
+
+  {% if a.price_now is not none and a.price_now is defined %}
+  | | Station | Price |
+  |---|---|---|
+  | **Now** | {{ a.station_now }} | {{ '%.3f' % a.price_now }} {{ unit }} |
+  {% if a.expected_time and a.expected_price < a.price_now %}| **{{ as_timestamp(a.expected_time) | timestamp_custom('%a %H:%M') }}** | {{ a.expected_station }} | {{ '%.3f' % a.expected_price }} {{ unit }} |
+  {% endif %}
+
+  {% set per_litre = 'sensor.' ~ p ~ '_saving_if_you_wait_per_litre' %}
+  {% set full = 'sensor.' ~ p ~ '_saving_if_you_wait_full_tank' %}
+  Waiting would save **{{ states(per_litre) }} {{ state_attr(per_litre, 'unit_of_measurement') }}** per litre
+  {%- if states(full) not in ['unknown', 'unavailable'] %} – **{{ states(full) }} {{ unit }}** for {{ state_attr(full, 'litres') }} litres{% endif %}.
+  {% else %}
+  No prices right now.
+  {% endif %}

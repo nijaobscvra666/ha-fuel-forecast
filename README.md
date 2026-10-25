@@ -63,7 +63,7 @@ The recommendation and both saving sensors carry what they compare as attributes
 
 The recommendation stays `learning` until at least half of the hourly pattern is known – usually after about three days, immediately if long-term statistics exist.
 
-See [`examples/`](examples) for a notification automation and a dashboard card.
+See [`examples/`](examples) for dashboard cards (now vs. expected, forecast chart) and notification automations (good time, worth waiting, cheapest time reminder, tank nearly empty).
 
 ## Languages
 

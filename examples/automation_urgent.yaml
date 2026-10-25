@@ -1,0 +1,17 @@
+# Tank nearly empty (fuel level sensor at or below the urgent level):
+# fill up now, even if waiting would be cheaper.
+alias: "Fuel Forecast – tank nearly empty"
+mode: single
+triggers:
+  - trigger: state
+    entity_id: sensor.super_e5_recommendation
+    attribute: urgent
+    to: true
+actions:
+  - action: notify.notify
+    data:
+      title: "⛽ Tank nearly empty"
+      message: >-
+        Cheapest now: {{ state_attr('sensor.super_e5_best_price_now', 'station') }},
+        {{ states('sensor.super_e5_best_price_now') }}
+        {{ state_attr('sensor.super_e5_best_price_now', 'unit_of_measurement') }}

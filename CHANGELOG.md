@@ -9,6 +9,7 @@
 - Savings are now "Saving if you wait (per litre / full tank)", per litre in cents, and they – like the recommendation – show what they compare: price and station now vs. expected price, station and time.
 - Forecast anchored on each station's 24 h median instead of the current hour only, and never more than 2 ct below the station's lowest price of the last 24 h. Fixes a live case where a late noon spike made the forecast drop 15 ct too low and recommend waiting.
 - Recommendation no longer flips between wait and fill now while the saving hovers around the minimum: wait is kept until the saving drops below two thirds of the minimum.
+- More examples: card "now vs. expected", forecast chart, notifications for "worth waiting", cheapest time and nearly empty tank.
 - Price sensors keep their unit while the price source is down.
 - Cleaner station names (no "None" house numbers, no double spaces).
 

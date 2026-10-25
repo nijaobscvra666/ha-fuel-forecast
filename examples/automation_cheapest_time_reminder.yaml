@@ -1,0 +1,25 @@
+# Reminder at the expected cheapest time, if you need fuel.
+# A time trigger can use a timestamp sensor directly; when the forecast moves,
+# the trigger moves with it.
+alias: "Fuel Forecast – cheapest time reminder"
+mode: single
+triggers:
+  - trigger: time
+    at: sensor.super_e5_cheapest_time
+conditions:
+  - condition: not
+    conditions:
+      - condition: state
+        entity_id: sensor.super_e5_recommendation
+        state:
+          - no_need
+          - learning
+          - no_prices
+actions:
+  - action: notify.notify
+    data:
+      title: "⛽ Now is the expected low"
+      message: >-
+        {{ state_attr('sensor.super_e5_best_price_now', 'station') }}:
+        {{ states('sensor.super_e5_best_price_now') }}
+        {{ state_attr('sensor.super_e5_best_price_now', 'unit_of_measurement') }}
