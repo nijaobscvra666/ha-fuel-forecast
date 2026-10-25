@@ -15,7 +15,7 @@ Fuel prices follow a daily rhythm: stations raise prices in the morning and lowe
 
 From the current prices and the learned pattern it predicts the cheapest price over the next hours (24 h by default) and compares it with the best price right now.
 
-Backtest on five weeks of real German prices (18 stations, three test windows of one to two weeks): whenever Fuel Forecast said *wait*, waiting saved **6.5–8.3 ct per litre on average**, and in **none of 134 cases** was waiting more expensive than filling up immediately. Your results depend on your region and stations.
+Backtest on five weeks of real German prices (18 stations, three test windows of one to two weeks): whenever Fuel Forecast said *wait*, waiting saved **6.3–8.3 ct per litre on average**, and in **none of 131 cases** was waiting more expensive than filling up immediately. Your results depend on your region and stations.
 
 ## Installation
 
@@ -56,7 +56,7 @@ Entity ids below assume English as system language; Home Assistant builds them f
 | `binary_sensor.<name>_good_time_to_fill_up` | `on` while the recommendation is `fill_now` – handy for automations | `station`, `price_now`, `urgent` |
 | `sensor.<name>_best_price_now` | Cheapest price right now | `station`, `entity_id` (of the price sensor) |
 | `sensor.<name>_lowest_price` | Expected lowest price within the look-ahead | `station`, `entity_id`, `forecast` (hourly list of `time` and `price`, not stored in the history) |
-| `sensor.<name>_cheapest_time` | When that lowest price is expected (now, if nothing cheaper is expected) | – |
+| `sensor.<name>_cheapest_time` | When that lowest price is expected: the earliest hour within 1/6 of the minimum saving (0.5 ct) of the lowest, or now if nothing is at least that much cheaper – so it does not jump between hours that differ by fractions of a cent | – |
 | `sensor.<name>_saving_if_you_wait_per_litre` | What waiting for the expected low would save, in cents (ct/¢/p) per litre | comparison (see below) |
 | `sensor.<name>_saving_if_you_wait_full_tank` | The same for a fill-up: the missing litres if a fuel level sensor is set, otherwise the full tank | comparison, `litres` |
 | `sensor.<name>_learned_pattern` | Diagnostic: how much of the pattern is learned (%) | – |

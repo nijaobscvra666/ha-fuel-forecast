@@ -167,6 +167,29 @@ class RecommendTest(unittest.TestCase):
         self.assertEqual(result.recommendation, Recommendation.FILL_NOW)
         self.assertEqual(result.saving_per_litre, 0.0)
 
+    def test_flat_forecast_means_now(self):
+        # A saving below the tolerance is noise: cheapest time is now.
+        now = self.at(8)
+        current = {"sensor.cheap": 1.71}
+        saving = recommend(self.profiles, current, now, BERLIN, Settings()).saving_per_litre
+        flat = recommend(
+            self.profiles, current, now, BERLIN, Settings(min_saving=saving * 6 / 0.9)
+        )
+        self.assertEqual(flat.lowest_time, now)
+        self.assertEqual(flat.lowest_price, 1.71)
+        self.assertEqual(flat.saving_per_litre, 0.0)
+
+    def test_cheapest_time_is_earliest_about_as_cheap(self):
+        now = self.at(8)
+        current = {"sensor.cheap": 1.71}
+        exact = recommend(self.profiles, current, now, BERLIN, Settings(min_saving=0))
+        tolerant = recommend(self.profiles, current, now, BERLIN, Settings())
+        tolerance = 0.03 / 6
+        self.assertLessEqual(tolerant.lowest_time, exact.lowest_time)
+        self.assertLessEqual(tolerant.lowest_price, exact.lowest_price + tolerance + 1e-9)
+        earlier = [p for p in tolerant.forecast if p.time < tolerant.lowest_time]
+        self.assertTrue(all(p.price > exact.lowest_price + tolerance for p in earlier))
+
     def test_fuel_level_rules(self):
         now = self.at(8)
         current = {"sensor.cheap": 1.71}

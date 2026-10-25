@@ -31,6 +31,13 @@ MIN_COVERAGE = 0.5
 # hovered around the threshold (live: 2.7 / 3.0 / 3.1 / 2.8 ct in two hours).
 WAIT_HOLD_SHARE = 2 / 3
 
+# Differences below this share of the minimum saving (3 ct → 0.5 ct) are
+# noise: then the cheapest time is now, or the earliest hour that is about as
+# cheap as the lowest. Live, a nearly flat forecast made the cheapest time
+# jump between 00:00, 06:00 and 07:00 for less than 1 ct, while the real
+# price simply stayed the same.
+LOWEST_TOLERANCE_SHARE = 1 / 6
+
 
 class Recommendation(StrEnum):
     LEARNING = "learning"
@@ -176,8 +183,14 @@ def recommend(
 
     points = build_forecast(profiles, current, now, tz, settings.horizon_hours)
     result.forecast = points
+    tolerance = settings.min_saving * LOWEST_TOLERANCE_SHARE
     lowest = min(points, key=lambda p: p.price, default=None)
-    if lowest is None or lowest.price >= best_now_price:
+    if lowest is not None:
+        lowest = min(
+            (p for p in points if p.price <= lowest.price + tolerance),
+            key=lambda p: p.time,
+        )
+    if lowest is None or lowest.price > best_now_price - tolerance:
         result.lowest_price, result.lowest_time, result.lowest_station = (
             best_now_price,
             now,
