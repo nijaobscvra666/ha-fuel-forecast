@@ -16,8 +16,14 @@ async def async_get_config_entry_diagnostics(
     data = coordinator.data
     return {
         "options": {
-            **{k: v for k, v in entry.options.items() if k not in ("name", "stations")},
+            **{
+                k: v
+                for k, v in entry.options.items()
+                if k not in ("name", "stations", "fuel_level_entity")
+            },
             "stations": len(entry.options.get("stations", [])),
+            # The entity id of the car may contain its name or plate.
+            "fuel_level_entity": bool(entry.options.get("fuel_level_entity")),
         },
         "unit": coordinator.unit,
         "imported_from_statistics": coordinator.imported_from_statistics,
