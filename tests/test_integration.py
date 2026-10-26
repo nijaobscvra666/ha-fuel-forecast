@@ -2,10 +2,13 @@
 
 from __future__ import annotations
 
+from datetime import timedelta
+
 from homeassistant import config_entries
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
-from pytest_homeassistant_custom_component.common import MockConfigEntry
+from homeassistant.util import dt as dt_util
+from pytest_homeassistant_custom_component.common import MockConfigEntry, async_fire_time_changed
 
 from custom_components.fuel_forecast.const import (
     CONF_FUEL_LEVEL_ENTITY,
@@ -16,6 +19,7 @@ from custom_components.fuel_forecast.const import (
     CONF_URGENT_LEVEL,
     DOMAIN,
 )
+from custom_components.fuel_forecast.coordinator import SOURCE_DEBOUNCE
 
 STATIONS = ["sensor.station_a_e5", "sensor.station_b_e5"]
 OPTIONS = {
@@ -32,6 +36,13 @@ def _prices(hass: HomeAssistant, a: str = "1.789", b: str = "1.759", unit_b: str
         STATIONS[0], a, {"unit_of_measurement": "€", "brand": "ARAL", "street": "Hauptstr.", "house_number": "1"}
     )
     hass.states.async_set(STATIONS[1], b, {"unit_of_measurement": unit_b})
+
+
+async def _settle(hass: HomeAssistant) -> None:
+    """Let the debounced recompute after a source change run."""
+    await hass.async_block_till_done()
+    async_fire_time_changed(hass, dt_util.utcnow() + timedelta(seconds=SOURCE_DEBOUNCE + 1))
+    await hass.async_block_till_done()
 
 
 async def test_config_flow_creates_entry(hass: HomeAssistant) -> None:
@@ -84,32 +95,35 @@ async def test_setup_creates_entities_while_learning(hass: HomeAssistant) -> Non
     assert "expected_time" in saving.attributes
     assert hass.states.get("binary_sensor.super_e5_good_time_to_fill_up").state == "off"
 
-    # A price change is reflected right away (recompute without learning).
+    # A price change is recomputed once the source is quiet for a moment
+    # (stations update one after another; no in-between states).
     _prices(hass, b="1.699")
     await hass.async_block_till_done()
+    assert hass.states.get("sensor.super_e5_best_price_now").state == "1.759"
+    await _settle(hass)
     assert hass.states.get("sensor.super_e5_best_price_now").state == "1.699"
 
     # A 0 € glitch must not become the best price.
     _prices(hass, a="0")
-    await hass.async_block_till_done()
+    await _settle(hass)
     assert hass.states.get("sensor.super_e5_best_price_now").state == "1.759"
 
     # Station names are cleaned up (real Tankerkönig data: "None", trailing spaces).
     hass.states.async_set(
         STATIONS[0], "1.659", {"unit_of_measurement": "€", "brand": "OIL!", "street": "Brückenstraße 31", "house_number": "None"}
     )
-    await hass.async_block_till_done()
+    await _settle(hass)
     assert hass.states.get("sensor.super_e5_best_price_now").attributes["station"] == "OIL! Brückenstraße 31"
     hass.states.async_set(
         STATIONS[0], "1.659", {"unit_of_measurement": "€", "brand": "ELAN", "street": "Pommernstr. ", "house_number": "16"}
     )
-    await hass.async_block_till_done()
+    await _settle(hass)
     assert hass.states.get("sensor.super_e5_best_price_now").attributes["station"] == "ELAN Pommernstr. 16"
 
     # Source down: price sensors keep their unit (no None <-> "€" flip in statistics).
     for station in STATIONS:
         hass.states.async_set(station, "unavailable", {})
-    await hass.async_block_till_done()
+    await _settle(hass)
     assert hass.states.get("sensor.super_e5_recommendation").state == "no_prices"
     assert hass.states.get("sensor.super_e5_best_price_now").attributes["unit_of_measurement"] == "€"
 

@@ -37,6 +37,11 @@ WAIT_HOLD_SHARE = 2 / 3
 # jump between 00:00, 06:00 and 07:00 for less than 1 ct, while the real
 # price simply stayed the same.
 LOWEST_TOLERANCE_SHARE = 1 / 6
+# The cheapest time found last time is kept while it is still within that
+# tolerance, unless an earlier hour is at least as cheap. Live on 26.10.2026
+# the earliest hour inside the band changed every half hour (10:00 / 11:00
+# for 0.1 ct), because the forecast shifts a little with every sample.
+# Whether the cheapest time is "now" is decided as before.
 
 
 class Recommendation(StrEnum):
@@ -69,6 +74,8 @@ class Settings:
     urgent_level: float = 15.0
     # Last recommendation, for the hysteresis around min_saving.
     previous: Recommendation | None = None
+    # Last cheapest time, kept while it is still about as cheap as the lowest.
+    previous_lowest_time: datetime | None = None
 
 
 @dataclass
@@ -153,6 +160,24 @@ def build_forecast(
     return points
 
 
+def pick_lowest(
+    points: list[ForecastPoint], tolerance: float, previous_time: datetime | None = None
+) -> ForecastPoint | None:
+    """The cheapest time: the earliest hour about as cheap as the lowest, or the
+    previous one while it is still about as cheap and no earlier hour is at
+    least as cheap."""
+    if not points:
+        return None
+    cutoff = min(p.price for p in points) + tolerance
+    about_as_cheap = [p for p in points if p.price <= cutoff]
+    kept = next((p for p in about_as_cheap if p.time == previous_time), None)
+    if kept is not None:
+        about_as_cheap = [
+            p for p in about_as_cheap if p.time <= kept.time and p.price <= kept.price
+        ]
+    return min(about_as_cheap, key=lambda p: p.time)
+
+
 def recommend(
     profiles: dict[str, StationProfile],
     current: dict[str, float],
@@ -184,13 +209,8 @@ def recommend(
     points = build_forecast(profiles, current, now, tz, settings.horizon_hours)
     result.forecast = points
     tolerance = settings.min_saving * LOWEST_TOLERANCE_SHARE
-    lowest = min(points, key=lambda p: p.price, default=None)
-    if lowest is not None:
-        lowest = min(
-            (p for p in points if p.price <= lowest.price + tolerance),
-            key=lambda p: p.time,
-        )
-    if lowest is None or lowest.price >= best_now_price - tolerance:
+    earliest = pick_lowest(points, tolerance)
+    if earliest is None or earliest.price >= best_now_price - tolerance:
         result.lowest_price, result.lowest_time, result.lowest_station = (
             best_now_price,
             now,
@@ -198,6 +218,7 @@ def recommend(
         )
         saving = 0.0
     else:
+        lowest = pick_lowest(points, tolerance, settings.previous_lowest_time)
         result.lowest_price, result.lowest_time, result.lowest_station = (
             lowest.price,
             lowest.time,

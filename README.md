@@ -76,7 +76,8 @@ So a saving of 0.7 ct reads as "fill up now at ELAN for 2.079 or wait until 07:0
 
 - **Learning:** the recommendation stays `learning` until at least half of the hourly pattern is known – usually after about three days, immediately if long-term statistics exist. Hours in which a station is closed (no price) do not count, so stations that close at night still reach 100 %.
 - **No flip-flopping:** once it says *wait*, it keeps saying so until the saving drops below two thirds of the minimum saving (2 ct by default).
-- **Small differences are ignored:** the cheapest time is *now* unless something is at least 1/6 of the minimum saving (0.5 ct) cheaper. Otherwise it is the earliest hour that is about as cheap as the lowest, so it does not jump between hours a fraction of a cent apart.
+- **Small differences are ignored:** the cheapest time is *now* unless something is at least 1/6 of the minimum saving (0.5 ct) cheaper. Otherwise it is the earliest hour that is about as cheap as the lowest, so it does not jump between hours a fraction of a cent apart. Once found, that hour is kept while it stays about as cheap as the lowest.
+- **Calm updates:** after a price change Fuel Forecast waits until the price source has been quiet for 5 seconds, so stations updating one after another do not produce short-lived in-between states.
 
 See [`examples/`](examples) for dashboard cards (now vs. expected, forecast chart) and notification automations (good time, worth waiting, cheapest time reminder, tank nearly empty).
 

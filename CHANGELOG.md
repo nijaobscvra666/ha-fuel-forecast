@@ -11,6 +11,8 @@
 - Recommendation no longer flips between wait and fill now while the saving hovers around the minimum: wait is kept until the saving drops below two thirds of the minimum.
 - "Learned pattern" only counts the hours in which a station reports prices. Stations closed at night showed about 70 % forever although everything that can be learned was learned.
 - Cheapest time no longer jumps between hours that differ by fractions of a cent: it is now, unless something is at least 1/6 of the minimum saving (0.5 ct) cheaper, and otherwise the earliest hour about as cheap as the lowest.
+- Once found, the cheapest time is kept while it is still about as cheap as the lowest (it switched between 10:00 and 11:00 every half hour for 0.1 ct).
+- Price changes are recomputed once the source is quiet for 5 seconds. Sources update their stations one after another; this showed short-lived in-between recommendations and cheapest times that could trigger automations.
 - Diagnostics no longer contain the entity id of the fuel level sensor.
 - README: states vs. attributes explained per entity, backtest numbers updated for the current model.
 - More examples: card "now vs. expected", forecast chart, notifications for "worth waiting", cheapest time and nearly empty tank.

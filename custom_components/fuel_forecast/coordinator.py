@@ -11,6 +11,7 @@ from homeassistant.components.recorder.statistics import statistics_during_perio
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import ATTR_UNIT_OF_MEASUREMENT, STATE_UNAVAILABLE, STATE_UNKNOWN
 from homeassistant.core import Event, EventStateChangedData, HomeAssistant, callback
+from homeassistant.helpers.debounce import Debouncer
 from homeassistant.helpers.event import (
     async_track_state_change_event,
     async_track_time_interval,
@@ -43,6 +44,12 @@ from .model.profile import StationProfile
 _LOGGER = logging.getLogger(__name__)
 
 SAVE_DELAY = 300  # seconds; the profile changes slowly, no need to write often
+# Price sources update their stations one after another (Tankerkönig: all
+# within about a second). Recomputing on each single change showed short-lived
+# in-between states, e.g. four recommendations in one second or the cheapest
+# time jumping to 01:00 for a second (live 26.10.2026), which can trigger
+# automations. Wait until the source is quiet for a moment instead.
+SOURCE_DEBOUNCE = 5  # seconds
 
 
 def _number(value: Any) -> float | None:
@@ -77,6 +84,13 @@ class FuelForecastCoordinator(DataUpdateCoordinator[Result]):
         # (a unit flipping between None and "€" upsets the long-term statistics).
         self._last_unit: str | None = None
         self.imported_from_statistics = False
+        self._recompute_debouncer = Debouncer(
+            hass,
+            _LOGGER,
+            cooldown=SOURCE_DEBOUNCE,
+            immediate=False,
+            function=self._recompute,
+        )
 
     @property
     def stations(self) -> list[str]:
@@ -211,6 +225,7 @@ class FuelForecastCoordinator(DataUpdateCoordinator[Result]):
             no_need_level=float(opts.get(CONF_NO_NEED_LEVEL, DEFAULT_NO_NEED_LEVEL)),
             urgent_level=float(opts.get(CONF_URGENT_LEVEL, DEFAULT_URGENT_LEVEL)),
             previous=self.data.recommendation if self.data else None,
+            previous_lowest_time=self.data.lowest_time if self.data else None,
         )
 
     def _compute(self) -> Result:
@@ -240,7 +255,11 @@ class FuelForecastCoordinator(DataUpdateCoordinator[Result]):
 
     @callback
     def _handle_source_change(self, event: Event[EventStateChangedData]) -> None:
-        """A price or the fuel level changed: recompute without learning."""
+        """A price or the fuel level changed: recompute (debounced) without learning."""
+        self._recompute_debouncer.async_schedule_call()
+
+    @callback
+    def _recompute(self) -> None:
         if self.data is not None:
             self.async_set_updated_data(self._compute())
 
@@ -260,6 +279,7 @@ class FuelForecastCoordinator(DataUpdateCoordinator[Result]):
         }
 
     async def async_shutdown(self) -> None:
+        self._recompute_debouncer.async_shutdown()
         await super().async_shutdown()
         await self._store.async_save(self._data_to_store())
 

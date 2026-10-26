@@ -18,9 +18,11 @@ model = importlib.util.module_from_spec(_spec)
 sys.modules["ff_model"] = model
 _spec.loader.exec_module(model)
 from ff_model.forecast import (  # noqa: E402
+    ForecastPoint,
     Recommendation,
     Settings,
     build_forecast,
+    pick_lowest,
     plausible_prices,
     recommend,
 )
@@ -212,6 +214,39 @@ class RecommendTest(unittest.TestCase):
         self.assertLessEqual(tolerant.lowest_price, exact.lowest_price + tolerance + 1e-9)
         earlier = [p for p in tolerant.forecast if p.time < tolerant.lowest_time]
         self.assertTrue(all(p.price > exact.lowest_price + tolerance for p in earlier))
+
+    def test_cheapest_time_is_kept_while_about_as_cheap(self):
+        # Live 26.10.2026: 10:00 and 11:00 within 0.1 ct, the earliest hour
+        # inside the band changed every half hour.
+        t0 = self.at(0)
+        def pts(*prices):
+            return [ForecastPoint(t0 + timedelta(hours=i), p, "s") for i, p in enumerate(prices)]
+        tol = 0.005
+        points = pts(2.130, 2.112, 2.111, 2.120)
+        self.assertEqual(pick_lowest(points, tol).time, points[1].time)  # earliest in band
+        # Previous 11:00 is kept: the earlier hour is in the band but not as cheap.
+        self.assertEqual(pick_lowest(points, tol, points[2].time).time, points[2].time)
+        # An earlier hour that is at least as cheap replaces it.
+        same = pts(2.130, 2.111, 2.111, 2.120)
+        self.assertEqual(pick_lowest(same, tol, same[2].time).time, same[1].time)
+        # Previous outside the band, or no longer in the forecast: earliest in band.
+        self.assertEqual(pick_lowest(points, tol, points[3].time).time, points[1].time)
+        self.assertEqual(pick_lowest(points, tol, t0 - timedelta(hours=1)).time, points[1].time)
+        self.assertIsNone(pick_lowest([], tol, points[2].time))
+
+    def test_now_is_decided_as_before_with_a_kept_time(self):
+        # A kept later hour must not turn "now" into a later time.
+        now = self.at(8)
+        current = {"sensor.cheap": 1.71}
+        saving = recommend(self.profiles, current, now, BERLIN, Settings()).saving_per_litre
+        settings = dict(min_saving=saving * 6 / 0.9)
+        flat = recommend(self.profiles, current, now, BERLIN, Settings(**settings))
+        self.assertEqual(flat.lowest_time, now)
+        for p in flat.forecast:
+            again = recommend(
+                self.profiles, current, now, BERLIN, Settings(**settings, previous_lowest_time=p.time)
+            )
+            self.assertEqual(again.lowest_time, now)
 
     def test_fuel_level_rules(self):
         now = self.at(8)
