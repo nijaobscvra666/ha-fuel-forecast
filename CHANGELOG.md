@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.1 – unreleased
+## 0.1.1 – 2026-10-27
 
 - "Learned pattern" now shows what is learned over all stations, also while no prices arrive (was 0 %).
 - Recommendation state `unavailable` renamed to `no_prices` (the word is reserved for entity availability).
